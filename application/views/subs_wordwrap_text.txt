@@ -1,0 +1,1 @@
+$newtext 		= wordwrap($PR_NOTE, 60, "<br>", TRUE);

@@ -1,0 +1,8 @@
+Sinkornisasi file dan database pada tgl 16 Jan 2019
+
+getCode = C:\xampp\htdocs\frans_sys\application\views\v_asset\v_asset_transfer\asset_transfer_form.php
+
+// Generate Code
+// search heare = sendDate
+$secGenCode		= base_url().'index.php/c_setting/c_4cc5yn/genCode/';
+$tbl_name		= "tbl_asset_tsfh";

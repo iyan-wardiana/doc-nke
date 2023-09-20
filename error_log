@@ -1,0 +1,12 @@
+[16-Feb-2017 06:00:24 UTC] PHP Fatal error:  Call to undefined method CI_DB_mysqli_result::reuslt() in /home/u3511558/public_html/application/views/template/sidebar.php on line 187
+[16-Feb-2017 06:25:38 UTC] PHP Fatal error:  Call to undefined method CI_Loader::model1() in /home/u3511558/public_html/application/controllers/Auth.php on line 9
+[16-Feb-2017 06:32:40 UTC] PHP Fatal error:  Cannot redeclare Listproject::index1() in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 28
+[16-Feb-2017 06:33:10 UTC] PHP Fatal error:  Cannot redeclare Listproject::index1() in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 28
+[16-Feb-2017 06:33:15 UTC] PHP Fatal error:  Cannot redeclare Listproject::index1() in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 28
+[16-Feb-2017 06:36:54 UTC] PHP Fatal error:  Call to a member function count_all_num_rows() on a non-object in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 42
+[16-Feb-2017 06:38:12 UTC] PHP Fatal error:  Call to a member function count_all_num_rows() on a non-object in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 42
+[16-Feb-2017 06:38:44 UTC] PHP Fatal error:  Call to a member function count_all_num_rows() on a non-object in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 42
+[16-Feb-2017 06:38:57 UTC] PHP Fatal error:  Call to a member function get_last_ten_project() on a non-object in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 72
+[16-Feb-2017 06:39:14 UTC] PHP Fatal error:  Call to a member function get_last_ten_project() on a non-object in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 72
+[16-Feb-2017 06:39:47 UTC] PHP Fatal error:  Call to a member function get_last_ten_project() on a non-object in /home/u3511558/public_html/application/controllers/c_project/Listproject.php on line 72
+[16-Feb-2017 07:08:02 UTC] PHP Fatal error:  Call to a member function setSecureUrl_encode() on a non-object in /home/u3511558/public_html/application/views/v_project/v_project_mc/project_si.php on line 311
