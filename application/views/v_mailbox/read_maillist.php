@@ -368,6 +368,11 @@ $MAIL_NO		= $MB_CODE;
             </div>
         </div>
 	</div>
+    <?php
+		$act_lnk = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+		// if($DefEmp_ID == 'D15040004221')
+			echo "<font size='1'><i>$act_lnk</i></font>";
+	?>
 </section>
 <script>
 	function printMail(printURL)

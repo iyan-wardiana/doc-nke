@@ -108,7 +108,7 @@ $Emp_DeptCode		= $this->session->userdata['Emp_DeptCode'];
 						</li>
                         <li>
                         	<a href="<?php echo $secSend_Mail; ?>"><i class="fa fa-envelope-o"></i> Sent
-                        	<span class="label label-warning pull-right"><?php echo $countSent; ?></span></a>
+                        	<span class="label label-success pull-right"><?php echo $countSent; ?></span></a>
                         </li>
                         <li>
                         	<a href="<?php echo $secDraft_Mail; ?>"><i class="fa fa-file-text-o"></i> Drafts
@@ -120,7 +120,7 @@ $Emp_DeptCode		= $this->session->userdata['Emp_DeptCode'];
                         </li>
                         <li>
                         	<a href="<?php echo $secTrash_Mail; ?>"><i class="fa fa-trash-o"></i> Trash
-                            <span class="label label-warning pull-right"><?php echo $countTrash; ?></span></a>
+                            <span class="label label-danger pull-right"><?php echo $countTrash; ?></span></a>
                         </li>
                     </ul>
                 </div>
@@ -391,6 +391,11 @@ $Emp_DeptCode		= $this->session->userdata['Emp_DeptCode'];
             </div>
         </div>
     </div>
+    <?php
+		$act_lnk = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+		// if($DefEmp_ID == 'D15040004221')
+			echo "<font size='1'><i>$act_lnk</i></font>";
+	?>
 </section>
 <script>
     $.widget.bridge('uibutton', $.ui.button);
