@@ -12,7 +12,7 @@ class M_mailbox extends CI_Model
 	// START : INBOX
 		function count_all_inbox($DefEmp_ID) // U - INBOX
 		{
-			$sql		= "tbl_mailbox WHERE MB_TO_ID = '$DefEmp_ID' AND MB_STATUS IN (1,2)";
+			$sql		= "tbl_mailbox WHERE MB_TO_ID = '$DefEmp_ID' AND MB_STATUS IN (1,2) AND DOC_STATUS IN (3,6)";
 			return $this->db->count_all($sql);
 		}
 		
@@ -28,7 +28,7 @@ class M_mailbox extends CI_Model
 								A.MB_FROM, A.MB_TO_ID, A.MB_TO, A.MB_MESSAGE, A.MB_STATUS, A.MB_FN1
 							FROM tbl_mailbox A
 							WHERE A.MB_TO_ID = '$DefEmp_ID'
-							AND A.MB_STATUS IN (1,2)
+							AND A.MB_STATUS IN (1,2) AND A.DOC_STATUS IN (3,6)
 							ORDER BY A.MB_DATE1 DESC";
 			return $this->db->query($sql);
 		}
