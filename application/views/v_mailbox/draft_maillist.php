@@ -221,7 +221,7 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                     <thead>
                                         <tr>
                                             <th width="5%">&nbsp;</th>
-                                            <th width="5%" class="mailbox-star" nowrap>Mail To</th>
+                                            <th width="5%" class="mailbox-star" nowrap>Mail From</th>
                                             <th width="7%" class="mailbox-name">Subject</th>
                                             <th width="65%" class="mailbox-subject">Message</th>
                                             <th width="7%" class="mailbox-attachment">Attach.</th>
@@ -338,10 +338,23 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                                     <td class="mailbox-name" nowrap>
 														<?php
                                                         	$secUpdate_Mail	= site_url('c_mailbox/c_mailbox/draft_mail_update/?id='.$this->url_encryption_helper->encode_url($MB_ID));
-															if($MB_TO == '')
-																$MB_TO	= " ";
-                                                            $MB_TOV	= cut_text2 ("$MB_TO", 16);
-                                                            echo anchor($secUpdate_Mail, $MB_TOV);
+															// if($MB_TO == '')
+															// 	$MB_TO	= " ";
+                                                            // $MB_TOV	= cut_text2 ("$MB_TO", 16);
+                                                            // echo anchor($secUpdate_Mail, $MB_TOV);
+                                                            $FullName   = "";
+                                                            $s_EMPN     = "SELECT CONCAT(First_Name, ' ', Last_name) AS FullName FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
+                                                            $r_EMPN     = $this->db->query($s_EMPN);
+                                                            if($r_EMPN->num_rows() > 0)
+                                                            {
+                                                                foreach($r_EMPN->result() as $rw_EMPN):
+                                                                    $FullName   = $rw_EMPN->FullName;
+                                                                endforeach;
+                                                            }
+															if($FullName == '')
+																$FullName	= " ";
+                                                            $FullNameV	= cut_text2 ("$FullName", 16);
+                                                            echo anchor($secUpdate_Mail, $FullNameV);
                                                         ?>
                                                     </td>
                                                     <td class="mailbox-subject" nowrap>
@@ -414,6 +427,11 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
             </div>
         </div>
     </div>
+    <?php
+		$act_lnk = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+		// if($DefEmp_ID == 'D15040004221')
+			echo "<font size='1'><i>$act_lnk</i></font>";
+	?>
 </section>
 
 <script>
