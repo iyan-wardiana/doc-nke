@@ -21,7 +21,7 @@ class C_mailbox  extends CI_Controller
 		$this->data['ISAPPROVE'] 	= $this->session->userdata['ISAPPROVE'];
 		$this->data['LangID']		= $this->session->userdata['LangID'];
 		
-		function cut_text2($var, $len = 200, $txt_titik = "-") 
+		function cut_text2($var, $len = 200, $txt_titik = "") 
 		{
 			$var1	= explode("</p>",$var);
 			$var	= $var1[0];
