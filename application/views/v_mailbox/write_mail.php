@@ -1122,6 +1122,11 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
             </div>
         </div>
 	</div>
+    <?php
+        $act_lnk = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        // if($DefEmp_ID == 'D15040004221')
+            echo "<font size='1'><i>$act_lnk</i></font>";
+    ?>
 </section>
 <script>
 	function ShowDocSelect_xx(thisvalue)
