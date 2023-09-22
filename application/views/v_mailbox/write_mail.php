@@ -583,8 +583,8 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                 <option value="S" <?php if($MB_CLASS == 'S') { ?> selected <?php } ?>> Surat </option>
                             </select>
                         </div>
-                        <div class="form-group" style="display: none;">
-                            <select name="MB_TYPE" id="MB_TYPE" class="form-control select2" placeholder="&nbsp;&nbsp;&nbsp;Mail Type" style="width: 100%;">
+                        <div class="form-group">
+                            <select name="MB_TYPE" id="MB_TYPE" class="form-control select2" placeholder="&nbsp;&nbsp;&nbsp;Mail Type" style="width: 100%;" onChange="ShowDocSelect_xx(this.value);">
                             	 <option value="">--- Mail Title --- </option>
                                 <?php
                                     $sqlMTyp	= "SELECT MT_CODE, MT_DESC FROM tbl_mail_type ORDER BY MT_ID";
