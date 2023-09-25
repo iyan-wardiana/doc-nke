@@ -1923,8 +1923,8 @@ class C_mailbox  extends CI_Controller
 		
 		if ($this->session->userdata('login') == TRUE)
 		{
-			$MB_ID		= $_GET['id'];
-			$MB_ID		= $this->url_encryption_helper->decode_url($MB_ID);
+			$MB_NO		= $_GET['id'];
+			$MB_NO		= $this->url_encryption_helper->decode_url($MB_NO);
 			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
 			
 			$data['title'] 			= $appName;
@@ -1932,7 +1932,7 @@ class C_mailbox  extends CI_Controller
 			$data['h2_title']		= 'Mailbox';
 			$data['MenuApp'] 		= 'MN381';
 			$data['form_action']	= site_url('c_mailbox/c_mailbox/draft_mail_update_process');
-			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process/?id='.$this->url_encryption_helper->encode_url($MB_ID));
+			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process/?id='.$this->url_encryption_helper->encode_url($MB_NO));
 			
 			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
 			$data["countInbox"] 	= $tot_Inbox;
@@ -1954,7 +1954,7 @@ class C_mailbox  extends CI_Controller
 	 
 			$data['viewmail']		= $this->m_mailbox->get_all_mail_draft($DefEmp_ID)->result();
 			
-			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_ID)->row();
+			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_NO)->row();
 			
 			$data['default']['MB_ID'] 		= $getMailDetail->MB_ID;
 			$data['default']['MB_NO'] 		= $getMailDetail->MB_NO;
@@ -2000,6 +2000,7 @@ class C_mailbox  extends CI_Controller
 	function draft_mail_update_process() // U -- Same with new mail
 	{	
 		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
+		$this->load->model('m_updash/m_updash', '', TRUE);
 		
 		$sqlApp 		= "SELECT * FROM tappname";
 		$resultaApp = $this->db->query($sqlApp)->result();
@@ -2086,6 +2087,7 @@ class C_mailbox  extends CI_Controller
 			$MB_FROM	= $Email;										// 
 			$MB_TO_ID 	= $this->input->post('MB_TO_ID');						// 			
 			$MB_TOG 	= $this->input->post('MB_TOG');					// 
+			$MB_TO_IDG 	= "";					// 
 			
 			if(count($MB_TO_ID) > 1) $MB_ISGROUP = 'G';
 			else $MB_ISGROUP = 'P';
@@ -2361,37 +2363,74 @@ class C_mailbox  extends CI_Controller
 
 				if($AH_ISLAST == 1)
 				{
-					$updMail = array('MB_CLASS' 	=> $MB_CLASS,
-									 'MB_TYPE'		=> $MB_TYPE,
-									 'MB_TYPE_X'	=> $MB_TYPE_X,
-									 'MB_DEPT'		=> $MB_DEPT,
-									 'MB_CODE'		=> $MB_CODE,
-									 'MB_PARENTC'	=> $MB_PARENTC,
-									 'MB_SUBJECT'	=> $MB_SUBJECT,
-									 'MB_DATE'		=> $MB_DATE,
-									 'MB_DATE1'		=> $MB_DATE1,
-									 'MB_FROM_ID'	=> $Emp_ID,
-									 'MB_FROM'		=> $MB_FROM,
-									 'MB_TO_ID'		=> $MB_TO_ID,
-									 'MB_TO'		=> $MB_TO,
-									 'MB_TO_IDG'	=> $MB_TO_IDG,
-									 'MB_TOG'		=> $MB_TOG,
-									 'MB_MESSAGE'	=> $MB_MESSAGE,
-									 'MB_STATUS'	=> $MB_STATUS, // Default 3. Draft
-									 'DOC_STATUS'	=> 3,
-									 'MB_FN1'		=> $file_name1,
-									 'MB_FN2'		=> $file_name2,
-									 'MB_FN3'		=> $file_name3,
-									 'MB_FN4'		=> $file_name4,
-									 'MB_FN5'		=> $file_name5,
-									 'MB_ISRUNNO'	=> 'Y',
-									 'MB_ISGROUP'	=> $MB_ISGROUP,
-									 'MB_CREATER'	=> $DefEmp_ID,
-									 'MB_CREATED'	=> $CREATED,
-									 'MB_D'			=> $MB_D,
-									 'MB_M'			=> $MB_M,
-									 'MB_Y'			=> $MB_Y);
-					$this->m_mailbox->update($MB_NO, $updMail);
+					/* ---------------------- HOLD --------------------------
+						$updMail = array('MB_CLASS' 	=> $MB_CLASS,
+										'MB_TYPE'		=> $MB_TYPE,
+										'MB_TYPE_X'	=> $MB_TYPE_X,
+										'MB_DEPT'		=> $MB_DEPT,
+										'MB_CODE'		=> $MB_CODE,
+										'MB_PARENTC'	=> $MB_PARENTC,
+										'MB_SUBJECT'	=> $MB_SUBJECT,
+										'MB_DATE'		=> $MB_DATE,
+										'MB_DATE1'		=> $MB_DATE1,
+										'MB_FROM_ID'	=> $Emp_ID,
+										'MB_FROM'		=> $MB_FROM,
+										'MB_TO_ID'		=> $MB_TO_ID,
+										'MB_TO'		=> $MB_TO,
+										'MB_TO_IDG'	=> $MB_TO_IDG,
+										'MB_TOG'		=> $MB_TOG,
+										'MB_MESSAGE'	=> $MB_MESSAGE,
+										'MB_STATUS'	=> $MB_STATUS, // Default 3. Draft
+										'DOC_STATUS'	=> 3,
+										'MB_FN1'		=> $file_name1,
+										'MB_FN2'		=> $file_name2,
+										'MB_FN3'		=> $file_name3,
+										'MB_FN4'		=> $file_name4,
+										'MB_FN5'		=> $file_name5,
+										'MB_ISRUNNO'	=> 'Y',
+										'MB_ISGROUP'	=> $MB_ISGROUP,
+										'MB_CREATER'	=> $DefEmp_ID,
+										'MB_CREATED'	=> $CREATED,
+										'MB_D'			=> $MB_D,
+										'MB_M'			=> $MB_M,
+										'MB_Y'			=> $MB_Y);
+						$this->m_mailbox->update($MB_NO, $updMail);
+					-------------------- END HOLD ---------------------------------------------- */
+
+					// WRITE TO SEND
+					$insMailS = array(
+									'MBS_NO'		=> $MB_NO,
+									'MBS_CLASS' 	=> $MB_CLASS,
+									'MBS_TYPE'		=> $MB_TYPE,
+									'MBS_TYPE_X'	=> $MB_TYPE_X,
+									'MBS_DEPT'		=> $MB_DEPT,
+									'MBS_CODE'		=> $MB_CODE,
+									'MBS_PARENTC'	=> $MB_PARENTC,
+									'MBS_SUBJECT'	=> $MB_SUBJECT,
+									'MBS_DATE'		=> $MB_DATE,
+									'MBS_DATE1'		=> $MB_DATE1,
+									'MBS_FROM_ID'	=> $DefEmp_ID,
+									'MBS_FROM'		=> $MB_FROM,
+									'MBS_TO_ID'		=> $MB_TO_ID,
+									'MBS_TO'		=> $MB_TO,
+									'MBS_TO_IDG'	=> $MB_TO_IDG,
+									'MBS_TOG'		=> $MB_TOG,
+									'MBS_MESSAGE'	=> $MB_MESSAGE,
+									'MBS_STATUS'	=> $MB_STATUS,
+									'MBS_FN1'		=> $file_name1,
+									'MBS_FN2'		=> $file_name2,
+									'MBS_FN3'		=> $file_name3,
+									'MBS_FN4'		=> $file_name4,
+									'MBS_FN5'		=> $file_name5,
+									'MBS_ISRUNNO'	=> 'N',
+									'MBS_ISGROUP'	=> $MB_ISGROUP,
+									'MBS_D'			=> $MB_D,
+									'MBS_M'			=> $MB_M,
+									'MBS_Y'			=> $MB_Y);
+					$this->m_mailbox->addSend($insMailS);
+			
+					// DELETE DRAFT ORIGINAL			
+					$this->m_mailbox->DeleteOriginalD($MB_NO);
 
 					// START : UPDATE STATUS
 						$completeName 	= $this->session->userdata['completeName'];
@@ -2440,9 +2479,6 @@ class C_mailbox  extends CI_Controller
 								 'MB_Y'			=> $MB_Y);
 				$this->m_mailbox->update($MB_NO, $updMail);
 			}
-			
-			// DELETE DRAFT ORIGINAL			
-			// $this->m_mailbox->DeleteOriginalD($MB_ID);
 			
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -3863,7 +3899,7 @@ class C_mailbox  extends CI_Controller
 		
 		if ($this->session->userdata('login') == TRUE)
 		{
-			$MB_ID		= $_GET['id'];
+			$MB_NO		= $_GET['id'];
 			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
 			
 			date_default_timezone_set("Asia/Jakarta");
@@ -3874,7 +3910,7 @@ class C_mailbox  extends CI_Controller
 			$data['h3_title']		= 'Print';
 			$data['viewType']		= 2;
 			
-			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_ID)->row();
+			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_NO)->row();
 			
 			$data['default']['MB_ID'] 		= $getMailDetail->MB_ID;
 			$data['default']['MB_NO'] 		= $getMailDetail->MB_NO;

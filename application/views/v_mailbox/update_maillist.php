@@ -454,15 +454,15 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
             $APPROVE_AMOUNT 	= 10000000000;
             //$APPROVE_AMOUNT	= 10000000000;
             //$DOCAPP_TYPE	= 1;
-            if($DOCAPP_TYPE == 1)
-            {
-                if($APPLIMIT_1 < $APPROVE_AMOUNT)
-                {
-                    $canApprove	= 0;
-                    $descApp	= "You can not approve caused of the max limit.";
-                    $statcoloer	= "danger";
-                }
-            }
+            // if($DOCAPP_TYPE == 1)
+            // {
+            //     if($APPLIMIT_1 < $APPROVE_AMOUNT)
+            //     {
+            //         $canApprove	= 0;
+            //         $descApp	= "You can not approve caused of the max limit.";
+            //         $statcoloer	= "danger";
+            //     }
+            // }
         }
         else
         {
@@ -760,7 +760,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                             }
                                             elseif($DOC_STATUS == 2 || $DOC_STATUS == 7)
                                             {
-                                                //$disButton	= 0;
+                                                $disButton	= 0;
                                                 if($canApprove == 0)
                                                     $disButton	= 1;
                                                 
@@ -768,6 +768,9 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                                 $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
                                                 if($resCAPPHE > 0)
                                                     $disButton	= 1;										
+                                                
+                                                if($canApprove == 1)
+                                                {
                                                 ?>
                                                     <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" onChange="selStat(this.value)" >
                                                         <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
@@ -780,14 +783,24 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                                         <option value="9"<?php if($DOC_STATUS == 9) { ?> selected <?php } ?> disabled>Void</option>
                                                     </select>
                                                 <?php
+                                                }
+                                                elseif($canApprove == 0)
+                                                {
+                                                    $descNotes	= "Anda tidak bisa menyetujui dokumen ini, dikarenakan tidak memiliki otorisasi untuk melakukan persetujuan. Silahkan hubungi Admin.";
+                                                    ?>
+                                                        <a href="" class="btn btn-danger btn-xs">
+                                                            <?php echo $descApp; ?>
+                                                        </a>
+                                                    <?php
+                                                }
                                             }
                                             elseif($DOC_STATUS == 3)
                                             {
-                                                //$disButton	= 0;
+                                                $disButton	= 0;
                                                 if($canApprove == 0)
                                                     $disButton	= 1;
                                                 
-                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO' AND AH_APPROVER = '$DefEmp_ID'";
                                                 $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
                                                 if($resCAPPHE > 0)
                                                     $disButton	= 1;	
@@ -798,7 +811,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                                     <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" >
                                                         <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
                                                         <option value="2"<?php if($DOC_STATUS == 2) { ?> selected <?php } ?> disabled>Confirm</option>
-                                                        <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> <?php if($disabled == 1) { ?> disabled <?php } ?>>Approved</option>
+                                                        <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> <?php if($disButton == 1) { ?> disabled <?php } ?>>Approved</option>
                                                         <option value="4"<?php if($DOC_STATUS == 4) { ?> selected <?php } ?> disabled>Revising</option>
                                                         <option value="5"<?php if($DOC_STATUS == 5) { ?> selected <?php } ?> disabled>Rejected</option>
                                                         <option value="6"<?php if($DOC_STATUS == 6) { ?> selected <?php } ?> disabled>Closed</option>
@@ -807,84 +820,70 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                                     </select>
                                                 <?php
                                             }
-                                            elseif($ISAPPROVE == 1)
-                                            {
-                                                if($DOC_STATUS == 1 || $DOC_STATUS == 4)
-                                                {
-                                                    //$disButton	= 1;
-                                                    ?>
-                                                        <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" >
-                                                            <option value="1">New</option>
-                                                            <option value="2">Confirm</option>
-                                                        </select>
-                                                    <?php
-                                                }
-                                                elseif($DOC_STATUS == 2 || $DOC_STATUS == 7)
-                                                {
-                                                    //$disButton	= 0;
-                                                    if($canApprove == 0)
-                                                        $disButton	= 1;
-                                                    
-                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
-                                                    $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
-                                                    if($resCAPPHE > 0)
-                                                        $disButton	= 1;					
-                                                
-                                                    ?>
-                                                        <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" onChange="selStat(this.value)" >
-                                                            <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
-                                                            <option value="2"<?php if($DOC_STATUS == 2) { ?> selected <?php } ?>>Confirm</option>
-                                                            <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> <?php if($disabled == 1) { ?> disabled <?php } ?>>Approved</option>
-                                                            <option value="4"<?php if($DOC_STATUS == 4) { ?> selected <?php } ?> >Revising</option>
-                                                            <option value="5"<?php if($DOC_STATUS == 5) { ?> selected <?php } ?> >Rejected</option>
-                                                            <option value="6"<?php if($DOC_STATUS == 6) { ?> selected <?php } ?> disabled>Closed</option>
-                                                            <option value="7"<?php if($DOC_STATUS == 7) { ?> selected <?php } ?> disabled>Waiting</option>
-                                                            <option value="9"<?php if($DOC_STATUS == 9) { ?> selected <?php } ?> disabled>Void</option>
-                                                        </select>
-                                                    <?php
-                                                }
-                                                elseif($DOC_STATUS == 3)
-                                                {
-                                                    //$disButton	= 0;
-                                                    if($canApprove == 0)
-                                                        $disButton	= 1;
-                                                    
-                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
-                                                    $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
-                                                    if($resCAPPHE > 0)
-                                                        $disButton	= 1;					
-                                                
-                                                    ?>
-                                                        <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" onChange="selStat(this.value)" >
-                                                            <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
-                                                            <option value="2"<?php if($DOC_STATUS == 2) { ?> selected <?php } ?> disabled>Confirm</option>
-                                                            <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> <?php if($disabled == 1) { ?> disabled <?php } ?>>Approved</option>
-                                                            <option value="4"<?php if($DOC_STATUS == 4) { ?> selected <?php } ?> disabled>Revising</option>
-                                                            <option value="5"<?php if($DOC_STATUS == 5) { ?> selected <?php } ?> disabled>Rejected</option>
-                                                            <option value="6"<?php if($DOC_STATUS == 6) { ?> selected <?php } ?> disabled>Closed</option>
-                                                            <option value="7"<?php if($DOC_STATUS == 7) { ?> selected <?php } ?> disabled >Waiting</option>
-                                                            <option value="9"<?php if($DOC_STATUS == 9) { ?> selected <?php } ?> disabled>Void</option>
-                                                        </select>
-                                                    <?php
-                                                }
-                                            }
                                         }
                                         // END : FOR ALL APPROVAL FUNCTION
                                     ?>
+                                    <script>
+                                        function selStat(thisValue)
+                                        {
+                                            var STAT_BEFORE = document.getElementById('STAT_BEFORE').value;
+                                            if(thisValue == 3)
+                                            {
+                                                document.getElementById('submitSent').style.display 	= '';
+                                                document.getElementById('submitDraft').style.display 	= 'none';
+                                            }
+                                            if(thisValue == 4 || thisValue == 5)
+                                            {
+                                                document.getElementById('submitSent').style.display 	= 'none';
+                                                document.getElementById('submitDraft').style.display 	= '';
+                                            }
+                                        }
+                                    </script>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <label for="inputName">&nbsp;</label>
                                 <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary" name="submitSent" id="submitSent" <?php if($DOC_STATUS != 3) echo "style='display: none;'" ?>>
-                                        <i class="fa fa-envelope-o"></i> Send
-                                    </button>
-                                    <button type="button" class="btn btn-primary" onClick="MailStatus(3)">
-                                        <i class="fa fa-save"></i> <?=$Save?>
-                                    </button>&nbsp;
-                                    <button type="reset" class="btn btn-danger">
-                                        <i class="fa fa-times"></i> Reset
-                                    </button>&nbsp;
+                                    <?php
+                                        if($DOC_STATUS == 1 || $DOC_STATUS == 4)
+                                        {
+                                            ?>
+                                                <button type="submit" class="btn btn-primary" name="submitSent" id="submitSent" style="display: none;">
+                                                    <i class="fa fa-envelope-o"></i> Send
+                                                </button>
+                                                <button type="button" class="btn btn-primary" id="submitDraft" onClick="MailStatus(3)">
+                                                    <i class="fa fa-save"></i> <?=$Save?>
+                                                </button>&nbsp;
+                                                <button type="reset" class="btn btn-danger">
+                                                    <i class="fa fa-times"></i> Reset
+                                                </button>&nbsp;
+                                            <?php
+                                        }
+                                        elseif($DOC_STATUS == 2 || $DOC_STATUS == 7)
+                                        {
+                                            $disButton	= 0;
+                                            if($canApprove == 0)
+                                                $disButton	= 1;
+                                            
+                                            $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO' AND AH_APPROVER = '$DefEmp_ID'";
+                                            $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
+                                            if($resCAPPHE > 0)
+                                                $disButton	= 1;
+
+                                            if($canApprove == 1)
+                                            {
+                                                ?>
+                                                    <button type="submit" class="btn btn-primary" name="submitSent" id="submitSent" style="display: none;">
+                                                        <i class="fa fa-envelope-o"></i> Send
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary" id="submitDraft" onClick="MailStatus(3)">
+                                                        <i class="fa fa-save"></i> <?=$Save?>
+                                                    </button>&nbsp;
+                                                <?php
+                                            }
+
+                                        }
+                                    ?>
                                 </div>
                             </div>
                         </div>

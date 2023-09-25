@@ -787,7 +787,7 @@ echo "MB_DEPT : $MB_DEPT";
                                                 if($canApprove == 0)
                                                     $disButton	= 1;
                                                 
-                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO' AND AH_APPROVER = '$DefEmp_ID'";
                                                 $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
                                                 if($resCAPPHE > 0)
                                                     $disButton	= 1;										
@@ -810,7 +810,7 @@ echo "MB_DEPT : $MB_DEPT";
                                                 if($canApprove == 0)
                                                     $disButton	= 1;
                                                 
-                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO' AND AH_APPROVER = '$DefEmp_ID'";
                                                 $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
                                                 if($resCAPPHE > 0)
                                                     $disButton	= 1;	
@@ -848,7 +848,7 @@ echo "MB_DEPT : $MB_DEPT";
                                                     if($canApprove == 0)
                                                         $disButton	= 1;
                                                     
-                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO' AND AH_APPROVER = '$DefEmp_ID'";
                                                     $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
                                                     if($resCAPPHE > 0)
                                                         $disButton	= 1;					
@@ -872,7 +872,7 @@ echo "MB_DEPT : $MB_DEPT";
                                                     if($canApprove == 0)
                                                         $disButton	= 1;
                                                     
-                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO' AND AH_APPROVER = '$DefEmp_ID'";
                                                     $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
                                                     if($resCAPPHE > 0)
                                                         $disButton	= 1;					
@@ -902,7 +902,7 @@ echo "MB_DEPT : $MB_DEPT";
                                     <button type="submit" class="btn btn-primary" name="submitSent" id="submitSent" <?php if($DOC_STATUS != 3) echo "style='display: none;'" ?>>
                                         <i class="fa fa-envelope-o"></i> Send
                                     </button>
-                                    <button type="button" class="btn btn-primary" onClick="MailStatus(3)" <?php if($resCAPP == 0) echo "style='display: none;'" ?>>
+                                    <button type="button" class="btn btn-primary" id="submitDraft" onClick="MailStatus(3)" <?php if($resCAPP == 0) echo "style='display: none;'" ?>>
                                         <i class="fa fa-save"></i> <?=$Save?>
                                     </button>&nbsp;
                                     <button type="reset" class="btn btn-danger">

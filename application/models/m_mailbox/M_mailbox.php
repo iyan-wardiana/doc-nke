@@ -44,10 +44,10 @@ class M_mailbox extends CI_Model
 			$this->db->update("tbl_mailbox", $updMail);
 		}
 				
-		function get_MailDetl($MB_ID) // U
+		function get_MailDetl($MB_NO) // U
 		{
 			$sql = "SELECT * FROM tbl_mailbox
-					WHERE MB_ID = $MB_ID";
+					WHERE MB_NO = $MB_NO";
 			return $this->db->query($sql);
 		}
 	
@@ -189,10 +189,10 @@ class M_mailbox extends CI_Model
 	
 		function get_all_mail_sent($DefEmp_ID) // U
 		{		
-			$sql 		= "SELECT A.MBS_ID, A.MBS_CODE, A.MBS_PARENTC, A.MBS_SUBJECT, A.MBS_DATE, A.MBS_DATE1, A.MBS_READD,
+			$sql 		= "SELECT A.MBS_ID, A.MBS_NO, A.MBS_CODE, A.MBS_PARENTC, A.MBS_SUBJECT, A.MBS_DATE, A.MBS_DATE1, A.MBS_READD,
 								A.MBS_FROM_ID, A.MBS_FROM, A.MBS_TO_ID, A.MBS_TO, A.MBS_MESSAGE, A.MBS_STATUS, A.MBS_FN1
 							FROM tbl_mailbox_send A
-							WHERE A.MBS_FROM_ID = '$DefEmp_ID'
+							WHERE A.MBS_FROM_ID = '$DefEmp_ID' OR A.MB_CREATER = '$DefEmp_ID'
 							ORDER BY A.MBS_DATE1 DESC";					// menampilkan semua email dari user aktif
 			return $this->db->query($sql);
 		}
@@ -340,7 +340,7 @@ class M_mailbox extends CI_Model
 	
 		function get_all_mail_draft($DefEmp_ID) // U
 		{
-			$sql 		= "SELECT MB_ID, MB_CODE, MB_PARENTC, MB_SUBJECT, MB_DATE, MB_DATE1, MB_READD, MB_FROM_ID,
+			$sql 		= "SELECT MB_ID, MB_NO, MB_CODE, MB_PARENTC, MB_SUBJECT, MB_DATE, MB_DATE1, MB_READD, MB_FROM_ID,
 								MB_FROM, MB_TO_ID, MB_TO, MB_MESSAGE, MB_STATUS, MB_FN1
 							FROM tbl_mailbox A
 							WHERE (MB_FROM_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID')
@@ -356,9 +356,9 @@ class M_mailbox extends CI_Model
 			return $this->db->query($sql);
 		}
 	
-		function DeleteOriginalD($MB_ID) // U
+		function DeleteOriginalD($MB_NO) // U
 		{
-			$sql = "DELETE FROM tbl_mailbox WHERE MB_ID = $MB_ID";
+			$sql = "DELETE FROM tbl_mailbox WHERE MB_NO = $MB_NO";
 			return $this->db->query($sql);
 		}
 	
@@ -487,7 +487,7 @@ class M_mailbox extends CI_Model
 	
 		function get_all_mail_trash($DefEmp_ID) // U
 		{	
-			$sql 		= "SELECT MBT_ID, MBT_CODE, MBT_PARENTC, MBT_SUBJECT, MBT_DATE, MBT_DATE1, MBT_READD,
+			$sql 		= "SELECT MBT_ID, MBT_NO, MBT_CODE, MBT_PARENTC, MBT_SUBJECT, MBT_DATE, MBT_DATE1, MBT_READD,
 								MBT_FROM_ID, MBT_FROM, MBT_TO_ID, MBT_TO, MBT_MESSAGE, MBT_STATUS, MBT_FN1
 							FROM tbl_mailbox_trash A
 							WHERE

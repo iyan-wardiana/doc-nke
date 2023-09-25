@@ -242,6 +242,7 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                             foreach($viewmail as $row) :
                                                 $myNewNo 		= ++$i;
                                                 $MB_ID 			= $row->MB_ID;
+                                                $MB_NO 			= $row->MB_NO;
                                                 $MB_CODE 		= $row->MB_CODE;
                                                 $MB_PARENTC		= $row->MB_PARENTC;
                                                 $MB_DATE		= $row->MB_DATE;
@@ -308,7 +309,7 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
 												else
 													$TIME_DIFFD	= date_format(date_create($MB_DATE), "d M");
 																								
-                                                $secRead_Mail	= site_url('c_mailbox/c_mailbox/read_mail/?id='.$this->url_encryption_helper->encode_url($MB_ID));
+                                                $secRead_Mail	= site_url('c_mailbox/c_mailbox/read_mail/?id='.$this->url_encryption_helper->encode_url($MB_NO));
                                                 if($MB_STATUS == 1)
 												{
 													if ($j==1) {
@@ -337,7 +338,7 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                                     </td>
                                                     <td class="mailbox-name" nowrap>
 														<?php
-                                                        	$secUpdate_Mail	= site_url('c_mailbox/c_mailbox/draft_mail_update/?id='.$this->url_encryption_helper->encode_url($MB_ID));
+                                                        	$secUpdate_Mail	= site_url('c_mailbox/c_mailbox/draft_mail_update/?id='.$this->url_encryption_helper->encode_url($MB_NO));
 															// if($MB_TO == '')
 															// 	$MB_TO	= " ";
                                                             // $MB_TOV	= cut_text2 ("$MB_TO", 16);
@@ -384,10 +385,14 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                                     <td width="5%" nowrap class="mailbox-date">
                                                     <?php
 														echo $TIME_DIFFD;
-											$secDel_Mail = base_url().'index.php/c_mailbox/c_mailbox/trash_mail_process_idx_D/?id='.$MB_ID;
+											$secDel_Mail = base_url().'index.php/c_mailbox/c_mailbox/trash_mail_process_idx_D/?id='.$MB_NO;
+                                            $secPrint_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/print_mail_I/?id='.$MB_NO;
 													?>
                                                     </td>
                                                     <td width="6%" nowrap class="mailbox-date" style="text-align:center">
+                                                        <a href="#" onClick="printMail('<?php echo $secPrint_Mail; ?>')" title="Print Mail" class="btn btn-primary btn-xs">
+                                                        	<i class="fa fa-print"></i>
+                                                        </a>
                                                         <a href="#" onClick="deleteMail('<?php echo $secDel_Mail; ?>')" title="Delete file" class="btn btn-danger btn-xs">
                                                         	<i class="fa fa-trash-o"></i>
                                                         </a>
@@ -481,6 +486,18 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
 		
 		document.getElementById('collID').value = collID;
 		document.getElementById('delClassAll').click();			
+	}
+
+    function printMail(printURL)
+	{
+		var url = printURL;
+		title = 'Select Item';
+		w = 1000;
+		h = 550;
+		//window.open(url,'window_baru','width=500','height=200','scrollbars=yes,resizable=yes,location=no,status=yes');
+		var left = (screen.width/2)-(w/2);
+		var top = (screen.height/2)-(h/2);
+		return window.open(url, title, 'toolbar=yes, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
 	}
 	
 	$(document).ready(function()
