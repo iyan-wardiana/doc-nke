@@ -128,6 +128,19 @@ $NO_05		= "NKE";
 $NO_06		= date('m');
 $NO_07		= date('y');
 $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
+
+echo "MB_DEPT : $MB_DEPT";
+// START: GET Emp_ID berdasarkan MB_DEPT
+    $Emp_ID    = $DefEmp_ID;
+    $s_EmpDEPT = "SELECT Emp_ID FROM tbl_employee WHERE Emp_ID IN (SELECT DEMP_EMPID FROM tbl_mail_dept_emp WHERE DEMP_DEPCODE = '$MB_DEPT')";
+    $r_EmpDEPT = $this->db->query($s_EmpDEPT);
+    if($r_EmpDEPT->num_rows() > 0)
+    {
+        foreach($r_EmpDEPT->result() as $rw_EmpDEPT):
+            $Emp_ID  = $rw_EmpDEPT->Emp_ID;
+        endforeach;
+    }
+// END
 ?>
 <!DOCTYPE html>
 <html>
@@ -257,7 +270,9 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 		endforeach;
 
     // START : APPROVE PROCEDURE
-			if($APPLEV == 'HO')
+        $POSS_LEVEL = "";
+
+		if($APPLEV == 'HO')
             $PRJCODE_LEV	= $this->data['PRJCODE_HO'];
         else
             $PRJCODE_LEV	= $this->data['PRJCODE'];
@@ -566,11 +581,11 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                 <form name="frm" method="post" action="">
                     <input type="hidden" name="MB_CLASS_A" id="MB_CLASS_A" class="textbox" value="<?php echo $MB_CLASS; ?>" />
                     <input type="hidden" name="MB_TYPE_A" id="MB_TYPE_A" class="textbox" value="<?php echo $MB_TYPE; ?>" />
-                    <input type="hidden" name="MB_DEPT_A" id="MB_DEPT_A" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
+                    <input type="text" name="MB_DEPT_A" id="MB_DEPT_A" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
                     <input type="submit" class="button_css" name="submitSrch" id="submitSrch" value=" search " style="display:none" />
                 </form>
                 <form name="frm1" method="post" action="<?php echo $form_action; ?>" enctype="multipart/form-data" onSubmit="return checkData();">
-                    <input type="hidden" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $DefEmp_ID; ?>" />
+                    <input type="text" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $Emp_ID; ?>" />
                     <input type="hidden" name="MB_DEPT" id="MB_DEPT" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
                     <input type="hidden" name="MB_STATUS" id="MB_STATUS" class="textbox" value="<?php echo $MB_STATUS; ?>" />
                     <input type="hidden" name="MB_PATTNO" id="MB_PATTNO" class="textbox" value="<?php echo $resMBCN; ?>" />
@@ -665,26 +680,6 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 									}
                                 ?>
                             </select>                           
-                        </div>
-                        <div class="form-group" style="display: none;">
-                            <select name="MB_TO[]" id="MB_TO" class="form-control select2" multiple="multiple" data-placeholder="&nbsp;&nbsp;&nbsp;Mail To" style="width: 100%;">
-                                <?php
-                                    $sqlEmp	= "SELECT Emp_ID, First_Name, Last_Name, Email
-												FROM tbl_employee WHERE Emp_ID != '$DefEmp_ID' AND Email != '' ORDER BY First_Name";
-                                    $sqlEmp	= $this->db->query($sqlEmp)->result();
-                                    foreach($sqlEmp as $row) :
-                                        $Emp_ID		= $row->Emp_ID;
-                                        $First_Name	= $row->First_Name;
-                                        $Last_Name	= $row->Last_Name;
-                                        $Email		= $row->Email;
-                                        ?>
-                                            <option value="<?php echo "$Emp_ID|$Email"; ?>">
-                                                <?php echo "$First_Name $Last_Name - $Email"; ?>
-                                            </option>
-                                        <?php
-                                    endforeach;
-                                ?>
-                            </select>
                         </div>
                         <div class="form-group">
                             <select name="MB_TO_ID[]" id="MB_TO_ID" class="form-control select2" multiple="multiple" data-placeholder="&nbsp;&nbsp;&nbsp;Mail To" style="width: 100%;">
@@ -907,7 +902,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                     <button type="submit" class="btn btn-primary" name="submitSent" id="submitSent" <?php if($DOC_STATUS != 3) echo "style='display: none;'" ?>>
                                         <i class="fa fa-envelope-o"></i> Send
                                     </button>
-                                    <button type="button" class="btn btn-primary" onClick="MailStatus(3)">
+                                    <button type="button" class="btn btn-primary" onClick="MailStatus(3)" <?php if($resCAPP == 0) echo "style='display: none;'" ?>>
                                         <i class="fa fa-save"></i> <?=$Save?>
                                     </button>&nbsp;
                                     <button type="reset" class="btn btn-danger">

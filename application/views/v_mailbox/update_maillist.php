@@ -87,6 +87,7 @@ $MB_TO_ID 	    = $default['MB_TO_ID'];
 $MB_TO 	        = $default['MB_TO'];
 $MB_SUBJECT 	= $default['MB_SUBJECT'];
 $MB_STATUS		= $default['MB_STATUS'];
+$DOC_STATUS		= $default['DOC_STATUS'];
 $MB_MESSAGE 	= $default['MB_MESSAGE'];
 
 if (isset($_POST['submitSrch']))
@@ -105,6 +106,18 @@ $NO_05		= "NKE";
 $NO_06		= date('m');
 $NO_07		= date('y');
 $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
+
+// START: GET Emp_ID berdasarkan MB_DEPT
+    $Emp_ID    = $DefEmp_ID;
+    $s_EmpDEPT = "SELECT Emp_ID FROM tbl_employee WHERE Emp_ID IN (SELECT DEMP_EMPID FROM tbl_mail_dept_emp WHERE DEMP_DEPCODE = '$MB_DEPT')";
+    $r_EmpDEPT = $this->db->query($s_EmpDEPT);
+    if($r_EmpDEPT->num_rows() > 0)
+    {
+        foreach($r_EmpDEPT->result() as $rw_EmpDEPT):
+            $Emp_ID  = $rw_EmpDEPT->Emp_ID;
+        endforeach;
+    }
+// END
 ?>
 <!DOCTYPE html>
 <html>
@@ -235,7 +248,9 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 		endforeach;
 
     // START : APPROVE PROCEDURE
-			if($APPLEV == 'HO')
+        $POSS_LEVEL = "";
+
+		if($APPLEV == 'HO')
             $PRJCODE_LEV	= $this->data['PRJCODE_HO'];
         else
             $PRJCODE_LEV	= $this->data['PRJCODE'];
@@ -405,7 +420,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                 $APP_STEP	= $rowAPP->APP_STEP;
                 $MAX_STEP	= $rowAPP->MAX_STEP;
             endforeach;
-            $sqlC_App	= "tbl_approve_hist WHERE AH_CODE = '$DocNumber'";
+            $sqlC_App	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO'";
             $resC_App 	= $this->db->count_all($sqlC_App);
             
             $BefStepApp	= $APP_STEP - 1;
@@ -436,7 +451,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
             // NOTES
             // $APPLIMIT_1 		= Maximum Limit to Approve
             // $APPROVE_AMOUNT	= Amount must be Approved
-            $APPROVE_AMOUNT 	= $WO_VALUE;
+            $APPROVE_AMOUNT 	= 10000000000;
             //$APPROVE_AMOUNT	= 10000000000;
             //$DOCAPP_TYPE	= 1;
             if($DOCAPP_TYPE == 1)
@@ -545,25 +560,28 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                 <form name="frm" method="post" action="">
                     <input type="hidden" name="MB_CLASS_A" id="MB_CLASS_A" class="textbox" value="<?php echo $MB_CLASS; ?>" />
                     <input type="hidden" name="MB_TYPE_A" id="MB_TYPE_A" class="textbox" value="<?php echo $MB_TYPE; ?>" />
-                    <input type="hidden" name="MB_DEPT_A" id="MB_DEPT_A" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
+                    <input type="hidden" name="MB_DEPT_A" id="MB_DEPT_A" class="textbox" value="<?php echo $MB_DEPT; ?>" />
                     <input type="submit" class="button_css" name="submitSrch" id="submitSrch" value=" search " style="display:none" />
                 </form>
                 <form name="frm1" method="post" action="<?php echo $form_action; ?>" enctype="multipart/form-data" onSubmit="return checkData();">
-                    <input type="hidden" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $DefEmp_ID; ?>" />
-                    <input type="hidden" name="MB_DEPT" id="MB_DEPT" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
+                    <input type="text" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $Emp_ID; ?>" />
+		            <input type="text" name="IS_LAST" id="IS_LAST" value="<?php echo $IS_LAST; ?>">
+		            <input type="text" name="APP_LEVEL" id="APP_LEVEL" value="<?php echo $APP_LEVEL; ?>">
+		            <input type="text" name="PRJCODE" id="PRJCODE" value="<?php echo $PRJCODE; ?>">
+                    <input type="text" name="MB_DEPT" id="MB_DEPT" class="textbox" value="<?php echo $MB_DEPT; ?>" />
                     <input type="text" name="MB_STATUS" id="MB_STATUS" class="textbox" value="<?php echo $MB_STATUS; ?>" />
                     <input type="hidden" name="MB_PATTNO" id="MB_PATTNO" class="textbox" value="<?php echo $resMBCN; ?>" />
                     <input type="text" name="MB_NO" id="MB_NO" class="textbox" value="<?php echo $MB_NO; ?>" />
                     <input type="text" name="MB_CODE" id="MB_CODE" class="textbox" value="<?php echo $MAIL_NO; ?>" />
                     <div class="box-body">
                         <div class="form-group">
-                            <select name="MB_CLASS" id="MB_CLASS" class="form-control" onChange="ShowDocSelect(1);">
+                            <select name="MB_CLASS" id="MB_CLASS" class="form-control select2" onChange="ShowDocSelect(1);">
                                 <option value="M" <?php if($MB_CLASS == 'M') { ?> selected <?php } ?>> Memo </option>
                                 <option value="S" <?php if($MB_CLASS == 'S') { ?> selected <?php } ?>> Surat </option>
                             </select>
                         </div>
-                        <div class="form-group" style="display: none;">
-                            <select name="MB_TYPE" id="MB_TYPE" class="form-control" placeholder="&nbsp;&nbsp;&nbsp;Mail Type" style="width: 100%;" onChange="ShowDocSelect_xx(this.value);">
+                        <div class="form-group">
+                            <select name="MB_TYPE" id="MB_TYPE" class="form-control select2" placeholder="&nbsp;&nbsp;&nbsp;Mail Type" style="width: 100%;" onChange="ShowDocSelect_xx(this.value);">
                                 <?php
                                     $sqlMTyp	= "SELECT MT_CODE, MT_DESC FROM tbl_mail_type ORDER BY MT_DESC";
                                     $sqlMTyp	= $this->db->query($sqlMTyp)->result();
@@ -591,7 +609,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 															B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
 														FROM tbl_mail_dept_emp A
 															INNER JOIN tbl_mail_dept B ON A.DEMP_DEPCODE = B.MDEPT_CODE
-														WHERE A.DEMP_EMPID = '$DefEmp_ID'
+														WHERE A.DEMP_EMPID = '$Emp_ID'
 										 				ORDER BY A.DEMP_DEPCODE";
 										$sqlDept	= $this->db->query($sqlDept)->result();
 										foreach($sqlDept as $rowDept) :
@@ -621,10 +639,13 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                             </select>                           
                         </div>
                         <div class="form-group">
-                            <select name="MB_TO[]" id="MB_TO" class="form-control select2" multiple="multiple" data-placeholder="&nbsp;&nbsp;&nbsp;Mail To" style="width: 100%;">
+                            <select name="MB_TO_ID[]" id="MB_TO_ID" class="form-control select2" multiple="multiple" data-placeholder="&nbsp;&nbsp;&nbsp;Mail To" style="width: 100%;">
                                 <?php
+                                    $EmpIDx = "";
+                                    $selMB_TO_ID = explode("|", $MB_TO_ID);
+
                                     $sqlEmp	= "SELECT Emp_ID, First_Name, Last_Name, Email
-												FROM tbl_employee WHERE Emp_ID != '$DefEmp_ID' ORDER BY First_Name";
+												FROM tbl_employee WHERE Emp_ID != '$DefEmp_ID' AND Email != '' ORDER BY First_Name";
                                     $sqlEmp	= $this->db->query($sqlEmp)->result();
                                     foreach($sqlEmp as $row) :
                                         $Emp_ID		= $row->Emp_ID;
@@ -632,13 +653,13 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                                         $Last_Name	= $row->Last_Name;
                                         $Email		= $row->Email;
 
-                                        $Emp_IDx    = '';
-                                        for($i = 0; $i < count($MB_TO); $i++) {
-                                            $MB_TOx = $MB_TO[$i];
-                                            if($Emp_ID == $MB_TOx) $Emp_IDx = $MB_TOx;
+                                        $EmpID1    = "";
+                                        for($i=0;$i<count($selMB_TO_ID);$i++) {
+                                            $EmpID1 = $selMB_TO_ID[$i];
+                                            if($EmpID1 == $Emp_ID) $EmpIDx = $EmpID1;
                                         }
                                         ?>
-                                            <option value="<?php echo "$Emp_ID|$Email"; ?>" <?php if($Emp_ID == $Emp_IDx) echo "selected"; ?>>
+                                            <option value="<?php echo "$Emp_ID"; ?>" <?php if($Emp_ID == $EmpIDx) echo "selected"; ?>>
                                                 <?php echo "$First_Name $Last_Name - $Email"; ?>
                                             </option>
                                         <?php
@@ -649,14 +670,23 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                         <div class="form-group">
                             <select name="MB_TOG[]" id="MB_TOG" class="form-control select2" multiple="multiple" data-placeholder="&nbsp;&nbsp;&nbsp;Mail To Group" style="width: 100%;">
                                 <?php
+                                    $MB_TOGx    = ""; 
+                                    $selMB_TOG  = explode("|", $MB_TOG);
+
                                     $sqlMG	= "SELECT MG_CODE, MG_NAME
 												FROM tbl_mailgroup_header ORDER BY MG_NAME ASC";
                                     $sqlMG	= $this->db->query($sqlMG)->result();
                                     foreach($sqlMG as $rowMG) :
                                         $MG_CODE	= $rowMG->MG_CODE;
                                         $MG_NAME	= $rowMG->MG_NAME;
+
+                                        $MB_TOG1    = "";
+                                        for($j=0;$j<count($selMB_TOG);$j++) {
+                                            $MB_TOG1    = $selMB_TOG[$j];
+                                            if($MG_CODE == $MG_CODEx) $MB_TOGx = $MB_TOG1;
+                                        }
                                         ?>
-                                            <option value="<?php echo "$MG_CODE"; ?>">
+                                            <option value="<?php echo "$MG_CODE"; ?>" <?php if($MB_TOG == $MB_TOGx) echo "selected"; ?>>
                                                 <?php echo "$MG_NAME"; ?>
                                             </option>
                                         <?php
@@ -699,18 +729,367 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                         </div>
                     </div>
                     <div class="box-footer">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-success" onClick="MailStatus(3)">
-                                <i class="fa fa-pencil"></i> Draft
-                            </button>&nbsp;
-                            <button type="reset" class="btn btn-danger">
-                                <i class="fa fa-times"></i> Reset
-                            </button>&nbsp;
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <label class="col-sm-3"><?=$Status?></label>
+                                <input type="hidden" name="STAT_BEFORE" id="STAT_BEFORE" value="<?php echo $DOC_STATUS; ?>">
+                                <div class="col-sm-9">
+                                    <?php
+                                        // START : FOR ALL APPROVAL FUNCTION
+                                        if($task == 'add')
+                                        {
+                                            ?>
+                                                <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" <?php if($disButton == 1){ ?> disabled <?php } ?>>
+                                                    <option value="1">New</option>
+                                                    <option value="2">Confirm</option>
+                                                </select>
+                                            <?php
+                                        }
+                                        else
+                                        {
+                                            //$disButton	= 1;
+                                            if($DOC_STATUS == 1 || $DOC_STATUS == 4)
+                                            {
+                                                //$disButton	= 0;
+                                                ?>
+                                                    <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" <?php if($disButton == 1){ ?> disabled <?php } ?>>
+                                                        <option value="1">New</option>
+                                                        <option value="2">Confirm</option>
+                                                    </select>
+                                                <?php
+                                            }
+                                            elseif($DOC_STATUS == 2 || $DOC_STATUS == 7)
+                                            {
+                                                //$disButton	= 0;
+                                                if($canApprove == 0)
+                                                    $disButton	= 1;
+                                                
+                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO' AND AH_APPROVER = '$DefEmp_ID'";
+                                                $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
+                                                if($resCAPPHE > 0)
+                                                    $disButton	= 1;										
+                                                ?>
+                                                    <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" onChange="selStat(this.value)" >
+                                                        <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
+                                                        <option value="2"<?php if($DOC_STATUS == 2) { ?> selected <?php } ?> >Confirm</option>
+                                                        <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> >Approved</option>
+                                                        <option value="4"<?php if($DOC_STATUS == 4) { ?> selected <?php } ?> >Revising</option>
+                                                        <option value="5"<?php if($DOC_STATUS == 5) { ?> selected <?php } ?> >Rejected</option>
+                                                        <option value="6"<?php if($DOC_STATUS == 6) { ?> selected <?php } ?> disabled>Closed</option>
+                                                        <option value="7"<?php if($DOC_STATUS == 7) { ?> selected <?php } ?> >Waiting</option>
+                                                        <option value="9"<?php if($DOC_STATUS == 9) { ?> selected <?php } ?> disabled>Void</option>
+                                                    </select>
+                                                <?php
+                                            }
+                                            elseif($DOC_STATUS == 3)
+                                            {
+                                                //$disButton	= 0;
+                                                if($canApprove == 0)
+                                                    $disButton	= 1;
+                                                
+                                                $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
+                                                if($resCAPPHE > 0)
+                                                    $disButton	= 1;	
+                                                if($ISDELETE == 1)
+                                                    $disButton	= 0;				
+                                            
+                                                ?>
+                                                    <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" >
+                                                        <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
+                                                        <option value="2"<?php if($DOC_STATUS == 2) { ?> selected <?php } ?> disabled>Confirm</option>
+                                                        <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> <?php if($disabled == 1) { ?> disabled <?php } ?>>Approved</option>
+                                                        <option value="4"<?php if($DOC_STATUS == 4) { ?> selected <?php } ?> disabled>Revising</option>
+                                                        <option value="5"<?php if($DOC_STATUS == 5) { ?> selected <?php } ?> disabled>Rejected</option>
+                                                        <option value="6"<?php if($DOC_STATUS == 6) { ?> selected <?php } ?> disabled>Closed</option>
+                                                        <option value="7"<?php if($DOC_STATUS == 7) { ?> selected <?php } ?> disabled >Waiting</option>
+                                                        <option value="9"<?php if($DOC_STATUS == 9) { ?> selected <?php } ?> disabled>Void</option>
+                                                    </select>
+                                                <?php
+                                            }
+                                            elseif($ISAPPROVE == 1)
+                                            {
+                                                if($DOC_STATUS == 1 || $DOC_STATUS == 4)
+                                                {
+                                                    //$disButton	= 1;
+                                                    ?>
+                                                        <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" >
+                                                            <option value="1">New</option>
+                                                            <option value="2">Confirm</option>
+                                                        </select>
+                                                    <?php
+                                                }
+                                                elseif($DOC_STATUS == 2 || $DOC_STATUS == 7)
+                                                {
+                                                    //$disButton	= 0;
+                                                    if($canApprove == 0)
+                                                        $disButton	= 1;
+                                                    
+                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                    $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
+                                                    if($resCAPPHE > 0)
+                                                        $disButton	= 1;					
+                                                
+                                                    ?>
+                                                        <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" onChange="selStat(this.value)" >
+                                                            <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
+                                                            <option value="2"<?php if($DOC_STATUS == 2) { ?> selected <?php } ?>>Confirm</option>
+                                                            <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> <?php if($disabled == 1) { ?> disabled <?php } ?>>Approved</option>
+                                                            <option value="4"<?php if($DOC_STATUS == 4) { ?> selected <?php } ?> >Revising</option>
+                                                            <option value="5"<?php if($DOC_STATUS == 5) { ?> selected <?php } ?> >Rejected</option>
+                                                            <option value="6"<?php if($DOC_STATUS == 6) { ?> selected <?php } ?> disabled>Closed</option>
+                                                            <option value="7"<?php if($DOC_STATUS == 7) { ?> selected <?php } ?> disabled>Waiting</option>
+                                                            <option value="9"<?php if($DOC_STATUS == 9) { ?> selected <?php } ?> disabled>Void</option>
+                                                        </select>
+                                                    <?php
+                                                }
+                                                elseif($DOC_STATUS == 3)
+                                                {
+                                                    //$disButton	= 0;
+                                                    if($canApprove == 0)
+                                                        $disButton	= 1;
+                                                    
+                                                    $sqlCAPPHE	= "tbl_approve_hist WHERE AH_CODE = '$JournalH_Code' AND AH_APPROVER = '$DefEmp_ID'";
+                                                    $resCAPPHE	= $this->db->count_all($sqlCAPPHE);
+                                                    if($resCAPPHE > 0)
+                                                        $disButton	= 1;					
+                                                
+                                                    ?>
+                                                        <select name="DOC_STATUS" id="DOC_STATUS" class="form-control select2" onChange="selStat(this.value)" >
+                                                            <option value="1"<?php if($DOC_STATUS == 1) { ?> selected <?php } ?> disabled>New</option>
+                                                            <option value="2"<?php if($DOC_STATUS == 2) { ?> selected <?php } ?> disabled>Confirm</option>
+                                                            <option value="3"<?php if($DOC_STATUS == 3) { ?> selected <?php } ?> <?php if($disabled == 1) { ?> disabled <?php } ?>>Approved</option>
+                                                            <option value="4"<?php if($DOC_STATUS == 4) { ?> selected <?php } ?> disabled>Revising</option>
+                                                            <option value="5"<?php if($DOC_STATUS == 5) { ?> selected <?php } ?> disabled>Rejected</option>
+                                                            <option value="6"<?php if($DOC_STATUS == 6) { ?> selected <?php } ?> disabled>Closed</option>
+                                                            <option value="7"<?php if($DOC_STATUS == 7) { ?> selected <?php } ?> disabled >Waiting</option>
+                                                            <option value="9"<?php if($DOC_STATUS == 9) { ?> selected <?php } ?> disabled>Void</option>
+                                                        </select>
+                                                    <?php
+                                                }
+                                            }
+                                        }
+                                        // END : FOR ALL APPROVAL FUNCTION
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="inputName">&nbsp;</label>
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary" name="submitSent" id="submitSent" <?php if($DOC_STATUS != 3) echo "style='display: none;'" ?>>
+                                        <i class="fa fa-envelope-o"></i> Send
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onClick="MailStatus(3)">
+                                        <i class="fa fa-save"></i> <?=$Save?>
+                                    </button>&nbsp;
+                                    <button type="reset" class="btn btn-danger">
+                                        <i class="fa fa-times"></i> Reset
+                                    </button>&nbsp;
+                                </div>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" name="submitSent" id="submitSent">
-                         <i class="fa fa-envelope-o"></i> Send
-                        </button>
                     </div>
+                    <div class="col-md-12">
+						<?php
+                            $DOC_NUM	= "";
+                            $sqlCAPPH	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM'";
+                            $resCAPPH	= $this->db->count_all($sqlCAPPH);
+							$sqlAPP		= "SELECT * FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
+											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV')";
+							$resAPP		= $this->db->query($sqlAPP)->result();
+							foreach($resAPP as $rowAPP) :
+								$MAX_STEP		= $rowAPP->MAX_STEP;
+								$APPROVER_1		= $rowAPP->APPROVER_1;
+								$APPROVER_2		= $rowAPP->APPROVER_2;
+								$APPROVER_3		= $rowAPP->APPROVER_3;
+								$APPROVER_4		= $rowAPP->APPROVER_4;
+								$APPROVER_5		= $rowAPP->APPROVER_5;
+							endforeach;
+							
+                        	if($resCAPP == 0)
+                        	{
+                        		if($LangID == 'IND')
+								{
+									$zerSetApp	= "Belum ada pengaturan untuk persetujuan dokumen ini.";
+								}
+								else
+								{
+									$zerSetApp	= "There are no arrangements for the approval of this document.";
+								}
+                        		?>
+                        			<div class="alert alert-warning alert-dismissible">
+					                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					                <?php echo $zerSetApp; ?>
+					              	</div>
+                        		<?php
+                        	}
+                        ?>
+		                <div class="row">
+		                    <div class="col-md-12">
+		                        <div class="box box-danger collapsed-box">
+		                            <div class="box-header with-border">
+		                                <h3 class="box-title"><?php echo $Approval; ?></h3>
+		                                <div class="box-tools pull-right">
+		                                    <span class="label label-danger"><?php echo "$Approved : $resCAPPH "; ?></span>
+		                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+		                                    </button>
+		                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+		                                    </button>
+		                                </div>
+		                            </div>
+		                            <div class="box-body">
+							            <div class="box-body no-padding">
+			                        		<div class="search-table-outter">
+								              	<table id="tbl" class="table table-striped" width="100%" border="0">
+													<?php
+														$s_STEP		= "SELECT DISTINCT APP_STEP FROM tbl_docstepapp_det
+																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' ORDER BY APP_STEP";
+														$r_STEP		= $this->db->query($s_STEP)->result();
+														foreach($r_STEP as $rw_STEP) :
+															$STEP	= $rw_STEP->APP_STEP;
+															$HIDE 	= 0;
+															?>
+												                <tr>
+												                  	<td style="width: 10%" nowrap>Tahap <?=$STEP?></td>
+																	<?php
+																		$s_APPH_1	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP'";
+									                                    $r_APPH_1	= $this->db->count_all($s_APPH_1);
+									                                    if($r_APPH_1 > 0)
+									                                    {
+																			$s_00	= "SELECT DISTINCT A.AH_APPROVER, A.AH_APPROVED,
+																							CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS complName
+																						FROM tbl_approve_hist A INNER JOIN tbl_employee B ON A.AH_APPROVER = B.Emp_ID
+																						WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = $STEP";
+																			$r_00	= $this->db->query($s_00)->result();
+																			foreach($r_00 as $rw_00) :
+																				$APP_EMP_1	= $rw_00->AH_APPROVER;
+																				$APP_NME_1	= $rw_00->complName;
+																				$APP_DAT_1	= $rw_00->AH_APPROVED;
+
+										                                    	$APPCOL 	= "success";
+										                                    	$APPIC 		= "check";
+																				?>
+																					<td style="width: 2%;">
+																						<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																							<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																						</div>
+																					</td>
+																					<td>
+																						<?=$APP_NME_1?><br>
+																						<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APP_DAT_1?></span>
+																					</td>
+																				<?php
+																			endforeach;
+																		}
+																		else
+																		{
+																			$s_00	= "SELECT DISTINCT A.APPROVER_1,
+																							CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS complName
+																						FROM tbl_docstepapp_det A INNER JOIN tbl_employee B ON A.APPROVER_1 = B.Emp_ID
+																						WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND APP_STEP = $STEP";
+																			$r_00	= $this->db->query($s_00)->result();
+																			foreach($r_00 as $rw_00) :
+																				$APP_EMP_1	= $rw_00->APPROVER_1;
+																				$APP_NME_1	= $rw_00->complName;
+																				$OTHAPP 	= 0;
+																				$s_APPH_1	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER = '$APP_EMP_1'";
+											                                    $r_APPH_1	= $this->db->count_all($s_APPH_1);
+											                                    if($r_APPH_1 > 0)
+											                                    {
+											                                    	$HIDE 	= 1;
+											                                    	$s_01	= "SELECT AH_APPROVED FROM tbl_approve_hist
+											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER = '$APP_EMP_1'";
+											                                        $r_01	= $this->db->query($s_01)->result();
+											                                        foreach($r_01 as $rw_01):
+											                                            $APPDT	= $rw_01->AH_APPROVED;
+											                                        endforeach;
+
+											                                    	$APPCOL 	= "success";
+											                                    	$APPIC 		= "check";
+																					?>
+																						<td style="width: 2%;">
+																							<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																								<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																							</div>
+																						</td>
+																						<td>
+																							<?=$APP_NME_1?><br>
+																							<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APPDT?></span>
+																						</td>
+																					<?php
+											                                    }
+											                                    else
+											                                    {
+											                                    	$APPCOL 	= "danger";
+											                                    	$APPIC 		= "close";
+											                                    	$APPDT 		= "-";
+											                                    	$s_APPH_O	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE')";
+												                                    $r_APPH_O	= $this->db->count_all($s_APPH_O);
+												                                    if($r_APPH_O > 0)
+												                                    	$OTHAPP = 1;
+											                                    }
+											                                    if($HIDE == 0)
+											                                    {
+																					?>
+																						<td style="width: 2%;">
+																							<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																								<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																							</div>
+																						</td>
+																						<td>
+																							<?=$APP_NME_1?><br>
+																							<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APPDT?></span>
+																						</td>
+																					<?php
+																				}
+
+																				if($OTHAPP > 0)
+																				{
+																					$APPDT_OTH 	= "-";
+																					$APPNM_OTH 	= "-";
+											                                    	$s_01	= "SELECT A.AH_APPROVED, A.AH_APPLEV,
+											                                    					CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS COMPLNAME
+											                                    				FROM tbl_approve_hist A INNER JOIN tbl_employee B ON A.AH_APPROVER = B.Emp_ID
+											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE')";
+											                                        $r_01	= $this->db->query($s_01)->result();
+											                                        foreach($r_01 as $rw_01):
+											                                            $APPDT_LEV	= $rw_01->AH_APPLEV;
+											                                            $APPDT_OTH	= $rw_01->AH_APPROVED;
+											                                            $APPNM_OTH	= $rw_01->COMPLNAME;
+
+												                                    	$APPCOL 	= "success";
+												                                    	$APPIC 		= "check";
+																						?>
+																			                <tr>
+																			                  	<td style="width: 10%" nowrap>&nbsp;</td>
+																								<td style="width: 2%;">
+																									<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																										<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																									</div>
+																								</td>
+																								<td>
+																									<?=$APPNM_OTH?><br>
+																									<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APPDT_OTH?></span>
+																								</td>
+																							</tr>
+																						<?php
+											                                        endforeach;
+											                                    }
+																			endforeach;
+																		}
+																	?>
+																</tr>
+															<?php
+														endforeach;
+													?>
+								              	</table>
+							              	</div>
+							            </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+			        </div>
                 </form>
             </div>
         </div>

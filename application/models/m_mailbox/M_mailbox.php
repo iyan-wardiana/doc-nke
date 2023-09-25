@@ -12,13 +12,13 @@ class M_mailbox extends CI_Model
 	// START : INBOX
 		function count_all_inbox($DefEmp_ID) // U - INBOX
 		{
-			$sql		= "tbl_mailbox WHERE MB_TO_ID = '$DefEmp_ID' AND MB_STATUS IN (1,2) AND DOC_STATUS IN (3,6)";
+			$sql		= "tbl_mailbox WHERE (MB_TO_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID') AND MB_STATUS IN (1,2) AND DOC_STATUS IN (3,6)";
 			return $this->db->count_all($sql);
 		}
 		
 		function count_all_inbox_ur($DefEmp_ID) // U - INBOX UN READ
 		{
-			$sql		= "tbl_mailbox WHERE MB_TO_ID = '$DefEmp_ID' AND MB_STATUS = '1'";
+			$sql		= "tbl_mailbox WHERE (MB_TO_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID') AND MB_STATUS = '1'";
 			return $this->db->count_all($sql);
 		}
 	
@@ -27,7 +27,7 @@ class M_mailbox extends CI_Model
 			$sql 		= "SELECT A.MB_ID, A.MB_NO, A.MB_CODE, A.MB_PARENTC, A.MB_SUBJECT, A.MB_DATE, A.MB_DATE1, A.MB_READD, A.MB_FROM_ID, 
 								A.MB_FROM, A.MB_TO_ID, A.MB_TO, A.MB_MESSAGE, A.MB_STATUS, A.MB_FN1
 							FROM tbl_mailbox A
-							WHERE A.MB_TO_ID = '$DefEmp_ID'
+							WHERE (A.MB_TO_ID = '$DefEmp_ID' OR A.MB_CREATER = '$DefEmp_ID')
 							AND A.MB_STATUS IN (1,2) AND A.DOC_STATUS IN (3,6)
 							ORDER BY A.MB_DATE1 DESC";
 			return $this->db->query($sql);
@@ -36,6 +36,12 @@ class M_mailbox extends CI_Model
 		function add($insMail) // U
 		{
 			return $this->db->insert('tbl_mailbox', $insMail);
+		}
+
+		function update($MB_NO, $updMail)
+		{
+			$this->db->where("MB_NO", $MB_NO);
+			$this->db->update("tbl_mailbox", $updMail);
 		}
 				
 		function get_MailDetl($MB_ID) // U
@@ -328,7 +334,7 @@ class M_mailbox extends CI_Model
 	// START : DRAFT	
 		function count_all_draft($DefEmp_ID) // U - DRAFT
 		{
-			$sql		= "tbl_mailbox  WHERE MB_FROM_ID = '$DefEmp_ID' AND MB_STATUS = '3'"; 	// menghitung semua email draft
+			$sql		= "tbl_mailbox  WHERE (MB_FROM_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID') AND MB_STATUS = '3'"; 	// menghitung semua email draft
 			return $this->db->count_all($sql);
 		}
 	
@@ -337,7 +343,7 @@ class M_mailbox extends CI_Model
 			$sql 		= "SELECT MB_ID, MB_CODE, MB_PARENTC, MB_SUBJECT, MB_DATE, MB_DATE1, MB_READD, MB_FROM_ID,
 								MB_FROM, MB_TO_ID, MB_TO, MB_MESSAGE, MB_STATUS, MB_FN1
 							FROM tbl_mailbox A
-							WHERE MB_FROM_ID = '$DefEmp_ID'
+							WHERE (MB_FROM_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID')
 							AND MB_STATUS = '3'
 							ORDER BY MB_DATE1 DESC";
 			return $this->db->query($sql);
