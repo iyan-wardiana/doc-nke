@@ -50,6 +50,13 @@ class M_mailbox extends CI_Model
 					WHERE MB_NO = $MB_NO";
 			return $this->db->query($sql);
 		}
+				
+		function get_MailDetl_S($MB_NO) // U
+		{
+			$sql = "SELECT * FROM tbl_mailbox_send
+					WHERE MBS_NO = $MB_NO";
+			return $this->db->query($sql);
+		}
 	
 		function DeleteOriginal($MB_ID) // U
 		{
@@ -183,7 +190,7 @@ class M_mailbox extends CI_Model
 	// START : SENT
 		function count_all_sent($DefEmp_ID) // U - SENT
 		{
-			$sql		= "tbl_mailbox_send WHERE MBS_FROM_ID = '$DefEmp_ID'"; 	// menghitung semua email dari user aktif
+			$sql		= "tbl_mailbox_send WHERE MBS_FROM_ID = '$DefEmp_ID' OR MBS_CREATER = '$DefEmp_ID'"; 	// menghitung semua email dari user aktif
 			return $this->db->count_all($sql);
 		}
 	
@@ -192,7 +199,7 @@ class M_mailbox extends CI_Model
 			$sql 		= "SELECT A.MBS_ID, A.MBS_NO, A.MBS_CODE, A.MBS_PARENTC, A.MBS_SUBJECT, A.MBS_DATE, A.MBS_DATE1, A.MBS_READD,
 								A.MBS_FROM_ID, A.MBS_FROM, A.MBS_TO_ID, A.MBS_TO, A.MBS_MESSAGE, A.MBS_STATUS, A.MBS_FN1
 							FROM tbl_mailbox_send A
-							WHERE A.MBS_FROM_ID = '$DefEmp_ID' OR A.MB_CREATER = '$DefEmp_ID'
+							WHERE A.MBS_FROM_ID = '$DefEmp_ID' OR A.MBS_CREATER = '$DefEmp_ID'
 							ORDER BY A.MBS_DATE1 DESC";					// menampilkan semua email dari user aktif
 			return $this->db->query($sql);
 		}

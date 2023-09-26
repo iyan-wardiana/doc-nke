@@ -215,6 +215,8 @@ class C_mailbox  extends CI_Controller
 			$appName = $therow->app_name;		
 		endforeach;	
 		
+		$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
+
 		if ($this->session->userdata('login') == TRUE)
 		{		
 			$this->db->trans_begin();
@@ -299,15 +301,12 @@ class C_mailbox  extends CI_Controller
 			
 			// GET MAIL FROM
 				$Email		= '';
-				$Emp_ID		= $this->input->post('Emp_ID');
-				$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
-				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$DefEmp_ID'";
+				$MB_FROM_ID	= $this->input->post('Emp_ID');
+				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
 				$sqlEmp		= $this->db->query($sqlEmp)->result();
 				foreach($sqlEmp as $row) :
 					$Email		= $row->Email;
 				endforeach;
-				if($Email == '')
-					$Email	= $Emp_ID;
 			
 			$MB_FROM	= $Email;										// 
 			$MB_TO 		= $this->input->post('MB_TO');					// 
@@ -745,8 +744,8 @@ class C_mailbox  extends CI_Controller
 			
 			// GET MAIL FROM
 				$Email		= '';
-				$Emp_ID		= $this->input->post('Emp_ID'); // MAIL From
-				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$Emp_ID'";
+				$MB_FROM_ID	= $this->input->post('Emp_ID'); // MAIL From
+				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
 				$sqlEmp		= $this->db->query($sqlEmp)->result();
 				foreach($sqlEmp as $row) :
 					$Email		= $row->Email;
@@ -997,7 +996,7 @@ class C_mailbox  extends CI_Controller
 									'MB_SUBJECT'=> $MB_SUBJECT,
 									'MB_DATE'	=> $MB_DATE,
 									'MB_DATE1'	=> $MB_DATE1,
-									'MB_FROM_ID'=> $Emp_ID,
+									'MB_FROM_ID'=> $MB_FROM_ID,
 									'MB_FROM'	=> $MB_FROM,
 									'MB_TO_ID'	=> $MB_TO_ID,
 									'MB_TO'		=> $MB_TO,
@@ -1148,7 +1147,7 @@ class C_mailbox  extends CI_Controller
 		
 		if ($this->session->userdata('login') == TRUE)
 		{
-			$MB_ID		= $_GET['id'];
+			$MB_NO		= $_GET['id'];
 			//$MB_ID		= $this->url_encryption_helper->decode_url($MB_ID);
 			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
 			
@@ -1162,7 +1161,7 @@ class C_mailbox  extends CI_Controller
 			$data['MenuApp'] 		= 'MN381';
 			//$data['action_reply']	= site_url('c_mailbox/c_mailbox/reply_mail/?id='.$this->url_encryption_helper->encode_url($MB_ID));
 			//$data['action_forward']	= site_url('c_mailbox/c_mailbox/forward_mail/?id='.$this->url_encryption_helper->encode_url($MB_ID));
-			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process_idx_S/?id='.$this->url_encryption_helper->encode_url($MB_ID));
+			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process_idx_S/?id='.$this->url_encryption_helper->encode_url($MB_NO));
 			
 			//$this->m_mailbox->update_status($MB_ID, $MB_READD);
 			
@@ -1186,39 +1185,39 @@ class C_mailbox  extends CI_Controller
 	 
 			$data['viewmail']		= $this->m_mailbox->get_all_mail_sent($DefEmp_ID)->result();
 			
-			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_ID)->row();
+			$getMailDetail			= $this->m_mailbox->get_MailDetl_S($MB_NO)->row();
 			
-			$data['default']['MB_ID'] 		= $getMailDetail->MB_ID;
-			$data['default']['MB_NO'] 		= $getMailDetail->MB_NO;
-			$data['default']['MB_CLASS'] 	= $getMailDetail->MB_CLASS;
-			$data['default']['MB_TYPE'] 	= $getMailDetail->MB_TYPE;
-			$data['default']['MB_TYPE_X'] 	= $getMailDetail->MB_TYPE_X;
-			$data['default']['MB_DEPT'] 	= $getMailDetail->MB_DEPT;
-			$data['default']['MB_CODE'] 	= $getMailDetail->MB_CODE;
-			$data['default']['MB_PARENTC'] 	= $getMailDetail->MB_PARENTC;
-			$data['default']['MB_SUBJECT'] 	= $getMailDetail->MB_SUBJECT;
-			$data['default']['MB_DATE'] 	= $getMailDetail->MB_DATE;
-			$data['default']['MB_DATE1'] 	= $getMailDetail->MB_DATE1;
-			$data['default']['MB_READD'] 	= $getMailDetail->MB_READD;
-			$data['default']['MB_FROM_ID'] 	= $getMailDetail->MB_FROM_ID;
-			$data['default']['MB_FROM']		= $getMailDetail->MB_FROM;
-			$data['default']['MB_TO_ID']	= $getMailDetail->MB_TO_ID;
-			$data['default']['MB_TO']		= $getMailDetail->MB_TO;
-			$data['default']['MB_TO_IDG']	= $getMailDetail->MB_TO_IDG;
-			$data['default']['MB_TOG']		= $getMailDetail->MB_TOG;
-			$data['default']['MB_MESSAGE'] 	= $getMailDetail->MB_MESSAGE;
-			$data['default']['MB_STATUS'] 	= $getMailDetail->MB_STATUS;	
+			$data['default']['MB_ID'] 		= $getMailDetail->MBS_ID;
+			$data['default']['MB_NO'] 		= $getMailDetail->MBS_NO;
+			$data['default']['MB_CLASS'] 	= $getMailDetail->MBS_CLASS;
+			$data['default']['MB_TYPE'] 	= $getMailDetail->MBS_TYPE;
+			$data['default']['MB_TYPE_X'] 	= $getMailDetail->MBS_TYPE_X;
+			$data['default']['MB_DEPT'] 	= $getMailDetail->MBS_DEPT;
+			$data['default']['MB_CODE'] 	= $getMailDetail->MBS_CODE;
+			$data['default']['MB_PARENTC'] 	= $getMailDetail->MBS_PARENTC;
+			$data['default']['MB_SUBJECT'] 	= $getMailDetail->MBS_SUBJECT;
+			$data['default']['MB_DATE'] 	= $getMailDetail->MBS_DATE;
+			$data['default']['MB_DATE1'] 	= $getMailDetail->MBS_DATE1;
+			$data['default']['MB_READD'] 	= $getMailDetail->MBS_READD;
+			$data['default']['MB_FROM_ID'] 	= $getMailDetail->MBS_FROM_ID;
+			$data['default']['MB_FROM']		= $getMailDetail->MBS_FROM;
+			$data['default']['MB_TO_ID']	= $getMailDetail->MBS_TO_ID;
+			$data['default']['MB_TO']		= $getMailDetail->MBS_TO;
+			$data['default']['MB_TO_IDG']	= $getMailDetail->MBS_TO_IDG;
+			$data['default']['MB_TOG']		= $getMailDetail->MBS_TOG;
+			$data['default']['MB_MESSAGE'] 	= $getMailDetail->MBS_MESSAGE;
+			$data['default']['MB_STATUS'] 	= $getMailDetail->MBS_STATUS;	
 			$data['default']['DOC_STATUS'] 	= $getMailDetail->DOC_STATUS;	
-			$data['default']['MB_FN1']		= $getMailDetail->MB_FN1;
-			$data['default']['MB_FN2']		= $getMailDetail->MB_FN2;
-			$data['default']['MB_FN3']		= $getMailDetail->MB_FN3;
-			$data['default']['MB_FN4']		= $getMailDetail->MB_FN4;
-			$data['default']['MB_FN5']		= $getMailDetail->MB_FN5;		
-			$data['default']['MB_ISRUNNO']	= $getMailDetail->MB_ISRUNNO;
-			$data['default']['MB_D']		= $getMailDetail->MB_D;
-			$data['default']['MB_M']		= $getMailDetail->MB_M;
-			$data['default']['MB_Y']		= $getMailDetail->MB_Y;
-			$data['default']['MB_PATTNO']	= $getMailDetail->MB_PATTNO;
+			$data['default']['MB_FN1']		= $getMailDetail->MBS_FN1;
+			$data['default']['MB_FN2']		= $getMailDetail->MBS_FN2;
+			$data['default']['MB_FN3']		= $getMailDetail->MBS_FN3;
+			$data['default']['MB_FN4']		= $getMailDetail->MBS_FN4;
+			$data['default']['MB_FN5']		= $getMailDetail->MBS_FN5;		
+			$data['default']['MB_ISRUNNO']	= $getMailDetail->MBS_ISRUNNO;
+			$data['default']['MB_D']		= $getMailDetail->MBS_D;
+			$data['default']['MB_M']		= $getMailDetail->MBS_M;
+			$data['default']['MB_Y']		= $getMailDetail->MBS_Y;
+			$data['default']['MB_PATTNO']	= $getMailDetail->MBS_PATTNO;
 			
 			$this->load->view('v_mailbox/read_maillist_S', $data);
 		}
@@ -2077,8 +2076,8 @@ class C_mailbox  extends CI_Controller
 			
 			// GET MAIL FROM
 				$Email		= '';
-				$Emp_ID		= $this->input->post('Emp_ID'); // MAIL From
-				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$Emp_ID'";
+				$MB_FROM_ID	= $this->input->post('Emp_ID'); // MAIL From
+				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
 				$sqlEmp		= $this->db->query($sqlEmp)->result();
 				foreach($sqlEmp as $row) :
 					$Email		= $row->Email;
@@ -2409,7 +2408,7 @@ class C_mailbox  extends CI_Controller
 									'MBS_SUBJECT'	=> $MB_SUBJECT,
 									'MBS_DATE'		=> $MB_DATE,
 									'MBS_DATE1'		=> $MB_DATE1,
-									'MBS_FROM_ID'	=> $DefEmp_ID,
+									'MBS_FROM_ID'	=> $MB_FROM_ID,
 									'MBS_FROM'		=> $MB_FROM,
 									'MBS_TO_ID'		=> $MB_TO_ID,
 									'MBS_TO'		=> $MB_TO,
@@ -2424,6 +2423,8 @@ class C_mailbox  extends CI_Controller
 									'MBS_FN5'		=> $file_name5,
 									'MBS_ISRUNNO'	=> 'N',
 									'MBS_ISGROUP'	=> $MB_ISGROUP,
+									'MBS_CREATER'	=> $DefEmp_ID,
+									'MBS_CREATED'	=> $CREATED,
 									'MBS_D'			=> $MB_D,
 									'MBS_M'			=> $MB_M,
 									'MBS_Y'			=> $MB_Y);
@@ -2515,6 +2516,8 @@ class C_mailbox  extends CI_Controller
 			$appName = $therow->app_name;		
 		endforeach;	
 		
+		$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
+		
 		if ($this->session->userdata('login') == TRUE)
 		{		
 			$this->db->trans_begin();
@@ -2579,9 +2582,8 @@ class C_mailbox  extends CI_Controller
 			
 			// GET MAIL FROM
 				$Email		= '';
-				$Emp_ID		= $this->input->post('Emp_ID');
-				$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
-				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$DefEmp_ID'";
+				$MB_FROM_ID	= $this->input->post('Emp_ID');
+				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
 				$sqlEmp		= $this->db->query($sqlEmp)->result();
 				foreach($sqlEmp as $row) :
 					$Email		= $row->Email;

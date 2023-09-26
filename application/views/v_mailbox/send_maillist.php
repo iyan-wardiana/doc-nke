@@ -222,7 +222,7 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                     <thead>
                                         <tr>
                                             <th width="5%">&nbsp;</th>
-                                            <th width="5%" class="mailbox-star" nowrap>Mail To</th>
+                                            <th width="5%" class="mailbox-star" nowrap>Mail From</th>
                                             <th width="7%" class="mailbox-name">Subject</th>
                                             <th width="65%" class="mailbox-subject">Message</th>
                                             <th width="5%" class="mailbox-date">Receipt</th>
@@ -238,6 +238,7 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                             foreach($viewmail as $row) :
                                                 $myNewNo 		= ++$i;
                                                 $MBS_ID 		= $row->MBS_ID;
+                                                $MBS_NO 		= $row->MBS_NO;
                                                 $MBS_CODE 		= $row->MBS_CODE;
                                                 $MBS_PARENTC	= $row->MBS_PARENTC;
                                                 $MBS_DATE		= $row->MBS_DATE;
@@ -323,10 +324,10 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
 													}
 												}
 												
-												$secDL_Mail		= base_url().'index.php/c_mailbox/c_mailbox/DL_mail_S/?id='.$MBS_ID;
-												$secPrint_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/print_mail_S/?id='.$MBS_ID;									
-                                                $secRead_Mail	= base_url().'index.php/c_mailbox/c_mailbox/read_mail_S/?id='.$MBS_ID;
-												$secDel_Mail	= base_url().'index.php/c_mailbox/c_mailbox/trash_mail_process_idx_S/?id='.$MBS_ID;
+												$secDL_Mail		= base_url().'index.php/c_mailbox/c_mailbox/DL_mail_S/?id='.$MBS_NO;
+												$secPrint_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/print_mail_S/?id='.$MBS_NO;									
+                                                $secRead_Mail	= base_url().'index.php/c_mailbox/c_mailbox/read_mail_S/?id='.$MBS_NO;
+												$secDel_Mail	= base_url().'index.php/c_mailbox/c_mailbox/trash_mail_process_idx_S/?id='.$MBS_NO;
                                                 ?>
                                                     <td>
                                                    		<?php /*?><input type="checkbox"><?php */?>
@@ -336,7 +337,21 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                                     <td class="mailbox-name" nowrap>
                                                     	<a href="<?php echo $secRead_Mail; ?>">
 															<?php
-                                                                echo cut_text2 ("$MBS_TO", 16);
+																$FullName   = "";
+																$s_EMPN     = "SELECT CONCAT(First_Name, ' ', Last_name) AS FullName FROM tbl_employee WHERE Emp_ID = '$MBS_FROM_ID'";
+																$r_EMPN     = $this->db->query($s_EMPN);
+																if($r_EMPN->num_rows() > 0)
+																{
+																	foreach($r_EMPN->result() as $rw_EMPN):
+																		$FullName   = $rw_EMPN->FullName;
+																	endforeach;
+																}
+																if($FullName == '')
+																	$FullName	= " ";
+																// $FullNameV	= cut_text2 ("$FullName", 16);
+																// echo anchor($secUpdate_Mail, $FullNameV);
+                                                                // echo cut_text2 ("$MBS_TO", 16);
+                                                                echo cut_text2 ("$FullName", 16);
                                                             ?>
                                                         </a>
                                                     </td>

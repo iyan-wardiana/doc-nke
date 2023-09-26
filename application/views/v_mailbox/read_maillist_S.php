@@ -133,11 +133,11 @@ $MAIL_NO		= $MB_CODE;
             	</div>
             	<div class="box-body no-padding">
                     <ul class="nav nav-pills nav-stacked">
-                        <li class="active">
+                        <li>
                         	<a href="<?php echo $secInbox_Mail; ?>"><i class="fa fa-inbox"></i> Inbox
                         	<span class="label label-primary pull-right"><?php echo $countInbox; ?></span></a>
 						</li>
-                        <li>
+                        <li class="active">
                         	<a href="<?php echo $secSend_Mail; ?>"><i class="fa fa-envelope-o"></i> Sent
                         	<span class="label label-warning pull-right"><?php echo $countSent; ?></span></a>
                         </li>
@@ -253,7 +253,7 @@ $MAIL_NO		= $MB_CODE;
 															B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME
 														FROM tbl_mail_dept_emp A
 															INNER JOIN tbl_mail_dept B ON A.DEMP_DEPCODE = B.MDEPT_CODE
-														WHERE A.DEMP_EMPID = '$DefEmp_ID'
+														WHERE A.DEMP_EMPID = '$MB_FROM_ID'
 										 				ORDER BY A.DEMP_DEPCODE";
 										$sqlDept	= $this->db->query($sqlDept)->result();
 										foreach($sqlDept as $rowDept) :
