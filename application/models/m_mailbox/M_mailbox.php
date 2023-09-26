@@ -12,13 +12,13 @@ class M_mailbox extends CI_Model
 	// START : INBOX
 		function count_all_inbox($DefEmp_ID) // U - INBOX
 		{
-			$sql		= "tbl_mailbox WHERE (MB_TO_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID') AND MB_STATUS IN (1,2) AND DOC_STATUS IN (3,6)";
+			$sql		= "tbl_mailbox WHERE MB_TO_ID = '$DefEmp_ID' AND MB_STATUS IN (1,2) AND DOC_STATUS IN (3,6)";
 			return $this->db->count_all($sql);
 		}
 		
 		function count_all_inbox_ur($DefEmp_ID) // U - INBOX UN READ
 		{
-			$sql		= "tbl_mailbox WHERE (MB_TO_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID') AND MB_STATUS = '1'";
+			$sql		= "tbl_mailbox WHERE MB_TO_ID = '$DefEmp_ID' AND MB_STATUS = '1'";
 			return $this->db->count_all($sql);
 		}
 	
@@ -365,7 +365,7 @@ class M_mailbox extends CI_Model
 	
 		function DeleteOriginalD($MB_NO) // U
 		{
-			$sql = "DELETE FROM tbl_mailbox WHERE MB_NO = $MB_NO";
+			$sql = "DELETE FROM tbl_mailbox WHERE MB_NO = $MB_NO AND MB_STATUS = 3";
 			return $this->db->query($sql);
 		}
 	

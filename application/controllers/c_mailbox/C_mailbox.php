@@ -720,7 +720,6 @@ class C_mailbox  extends CI_Controller
 			$MB_CLASS	= $this->input->post('MB_CLASS');				// 
 			$MB_TYPE 	= $this->input->post('MB_TYPE');				// 
 			$MB_TYPE_X1	= $this->input->post('MB_TYPE_X');				// 
-			$MB_TYPE_X1	= $this->input->post('MB_TYPE_X');				// 
 			
 			$pecah 	= explode("\n", $MB_TYPE_X1);
 			// string kosong inisialisasi
@@ -1056,8 +1055,8 @@ class C_mailbox  extends CI_Controller
 		
 		if ($this->session->userdata('login') == TRUE)
 		{
-			$MB_ID		= $_GET['id'];
-			$MB_ID		= $this->url_encryption_helper->decode_url($MB_ID);
+			$MB_NO		= $_GET['id'];
+			$MB_NO		= $this->url_encryption_helper->decode_url($MB_NO);
 			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
 			
 			date_default_timezone_set("Asia/Jakarta");
@@ -1068,11 +1067,11 @@ class C_mailbox  extends CI_Controller
 			$data['task']			= 'add';
 			$data['h2_title']		= 'Mailbox';
 			$data['MenuApp'] 		= 'MN381';
-			$data['action_reply']	= site_url('c_mailbox/c_mailbox/reply_mail/?id='.$this->url_encryption_helper->encode_url($MB_ID));
-			$data['action_forward']	= site_url('c_mailbox/c_mailbox/forward_mail/?id='.$this->url_encryption_helper->encode_url($MB_ID));
-			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process/?id='.$this->url_encryption_helper->encode_url($MB_ID));
+			$data['action_reply']	= site_url('c_mailbox/c_mailbox/reply_mail/?id='.$this->url_encryption_helper->encode_url($MB_NO));
+			$data['action_forward']	= site_url('c_mailbox/c_mailbox/forward_mail/?id='.$this->url_encryption_helper->encode_url($MB_NO));
+			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process/?id='.$this->url_encryption_helper->encode_url($MB_NO));
 			
-			$this->m_mailbox->update_status($MB_ID, $MB_READD);
+			$this->m_mailbox->update_status($MB_NO, $MB_READD);
 			
 			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
 			$data["countInbox"] 	= $tot_Inbox;
@@ -1094,7 +1093,7 @@ class C_mailbox  extends CI_Controller
 	 
 			$data['viewmail']		= $this->m_mailbox->get_all_mail_sent($DefEmp_ID)->result();
 			
-			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_ID)->row();
+			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_NO)->row();
 			
 			$data['default']['MB_ID'] 		= $getMailDetail->MB_ID;
 			$data['default']['MB_NO'] 		= $getMailDetail->MB_NO;
@@ -2396,42 +2395,85 @@ class C_mailbox  extends CI_Controller
 						$this->m_mailbox->update($MB_NO, $updMail);
 					-------------------- END HOLD ---------------------------------------------- */
 
+					// COPY tbl_mailbox_send dari tbl_mailbox
+					$s_MBS 		= "INSERT INTO tbl_mailbox_send (MBS_NO, PRJCODE, MBS_CLASS, MBS_TYPE, MBS_TYPE_X, MBS_DEPT, MBS_CODE, MBS_PARENTC, MBS_SUBJECT, MBS_DATE, MBS_DATE1, 
+											MBS_READD, MBS_FROM_ID, MBS_FROM, MBS_TO_ID, MBS_TO, MBS_TO_IDG, MBS_TOG, MBS_MESSAGE, MBS_STATUS, DOC_STATUS, 
+											MBS_FN1, MBS_FN2, MBS_FN3, MBS_FN4, MBS_FN5, MBS_ISRUNNO, MBS_ISGROUP, MBS_CREATER, MBS_CREATED, STATDESC, STATCOL, CREATERNM, 
+											MBS_D, MBS_M, MBS_Y, MBS_PATTNO)
+									SELECT MB_NO, PRJCODE, MB_CLASS, MB_TYPE, MB_TYPE_X, MB_DEPT, MB_CODE, MB_PARENTC, MB_SUBJECT, MB_DATE, MB_DATE1, 
+											MB_READD, MB_FROM_ID, MB_FROM, MB_TO_ID, MB_TO, MB_TO_IDG, MB_TOG, MB_MESSAGE, 1, 3, 
+											MB_FN1, MB_FN2, MB_FN3, MB_FN4, MB_FN5, MB_ISRUNNO, MB_ISGROUP, MB_CREATER, MB_CREATED, 'Approved', 'success', CREATERNM, 
+											MB_D, MB_M, MB_Y, MB_PATTNO
+								FROM tbl_mailbox WHERE MB_NO = '$MB_NO' AND MB_STATUS = 3";
+					$this->db->query($s_MBS);
+
 					// WRITE TO SEND
-					$insMailS = array(
-									'MBS_NO'		=> $MB_NO,
-									'MBS_CLASS' 	=> $MB_CLASS,
-									'MBS_TYPE'		=> $MB_TYPE,
-									'MBS_TYPE_X'	=> $MB_TYPE_X,
-									'MBS_DEPT'		=> $MB_DEPT,
-									'MBS_CODE'		=> $MB_CODE,
-									'MBS_PARENTC'	=> $MB_PARENTC,
-									'MBS_SUBJECT'	=> $MB_SUBJECT,
-									'MBS_DATE'		=> $MB_DATE,
-									'MBS_DATE1'		=> $MB_DATE1,
-									'MBS_FROM_ID'	=> $MB_FROM_ID,
-									'MBS_FROM'		=> $MB_FROM,
-									'MBS_TO_ID'		=> $MB_TO_ID,
-									'MBS_TO'		=> $MB_TO,
-									'MBS_TO_IDG'	=> $MB_TO_IDG,
-									'MBS_TOG'		=> $MB_TOG,
-									'MBS_MESSAGE'	=> $MB_MESSAGE,
-									'MBS_STATUS'	=> $MB_STATUS,
-									'MBS_FN1'		=> $file_name1,
-									'MBS_FN2'		=> $file_name2,
-									'MBS_FN3'		=> $file_name3,
-									'MBS_FN4'		=> $file_name4,
-									'MBS_FN5'		=> $file_name5,
-									'MBS_ISRUNNO'	=> 'N',
-									'MBS_ISGROUP'	=> $MB_ISGROUP,
-									'MBS_CREATER'	=> $DefEmp_ID,
-									'MBS_CREATED'	=> $CREATED,
-									'MBS_D'			=> $MB_D,
-									'MBS_M'			=> $MB_M,
-									'MBS_Y'			=> $MB_Y);
-					$this->m_mailbox->addSend($insMailS);
-			
-					// DELETE DRAFT ORIGINAL			
-					$this->m_mailbox->DeleteOriginalD($MB_NO);
+					// $insMailS = array(
+					// 				'MBS_NO'		=> $MB_NO,
+					// 				'MBS_CLASS' 	=> $MB_CLASS,
+					// 				'MBS_TYPE'		=> $MB_TYPE,
+					// 				'MBS_TYPE_X'	=> $MB_TYPE_X,
+					// 				'MBS_DEPT'		=> $MB_DEPT,
+					// 				'MBS_CODE'		=> $MB_CODE,
+					// 				'MBS_PARENTC'	=> $MB_PARENTC,
+					// 				'MBS_SUBJECT'	=> $MB_SUBJECT,
+					// 				'MBS_DATE'		=> $MB_DATE,
+					// 				'MBS_DATE1'		=> $MB_DATE1,
+					// 				'MBS_FROM_ID'	=> $MB_FROM_ID,
+					// 				'MBS_FROM'		=> $MB_FROM,
+					// 				'MBS_TO_ID'		=> $MB_TO_ID,
+					// 				'MBS_TO'		=> $MB_TO,
+					// 				'MBS_TO_IDG'	=> $MB_TO_IDG,
+					// 				'MBS_TOG'		=> $MB_TOG,
+					// 				'MBS_MESSAGE'	=> $MB_MESSAGE,
+					// 				'MBS_STATUS'	=> 1, // Send => unread
+					// 				'DOC_STATUS'	=> 3,
+					// 				'MBS_FN1'		=> $file_name1,
+					// 				'MBS_FN2'		=> $file_name2,
+					// 				'MBS_FN3'		=> $file_name3,
+					// 				'MBS_FN4'		=> $file_name4,
+					// 				'MBS_FN5'		=> $file_name5,
+					// 				'MBS_ISRUNNO'	=> 'N',
+					// 				'MBS_ISGROUP'	=> $MB_ISGROUP,
+					// 				'MBS_CREATER'	=> $DefEmp_ID,
+					// 				'MBS_CREATED'	=> $CREATED,
+					// 				'MBS_D'			=> $MB_D,
+					// 				'MBS_M'			=> $MB_M,
+					// 				'MBS_Y'			=> $MB_Y);
+					// $this->m_mailbox->addSend($insMailS);
+
+					if($MB_ISGROUP == 'G')
+					{
+						$s_Emp 	= "SELECT Emp_ID, Email FROM tbl_employee WHERE Emp_ID IN ('$joinQEmp') AND Email != ''";
+						$r_Emp 	= $this->db->query($s_Emp);
+						if($r_Emp->num_rows() > 0)
+						{
+							foreach($r_Emp->result() as $rw_Emp):
+								$Emp_ID 	= $rw_Emp->Emp_ID;
+								$Email 		= $rw_Emp->Email;
+
+								// COPY tbl_mailbox dari MB_STAT = 3, dan update MB_STAT = 1
+								$s_MB 		= "INSERT INTO tbl_mailbox (MB_NO, PRJCODE, MB_CLASS, MB_TYPE, MB_TYPE_X, MB_DEPT, MB_CODE, MB_PARENTC, MB_SUBJECT, MB_DATE, MB_DATE1, 
+														MB_READD, MB_FROM_ID, MB_FROM, MB_TO_ID, MB_TO, MB_TO_IDG, MB_TOG, MB_MESSAGE, MB_STATUS, DOC_STATUS, 
+														MB_FN1, MB_FN2, MB_FN3, MB_FN4, MB_FN5, MB_ISRUNNO, MB_ISGROUP, MB_CREATER, MB_CREATED, STATDESC, STATCOL, CREATERNM, 
+														MB_D, MB_M, MB_Y, MB_PATTNO)
+												SELECT MB_NO, PRJCODE, MB_CLASS, MB_TYPE, MB_TYPE_X, MB_DEPT, MB_CODE, MB_PARENTC, MB_SUBJECT, MB_DATE, MB_DATE1, 
+														MB_READD, MB_FROM_ID, MB_FROM, '$Emp_ID', '$Email', MB_TO_IDG, MB_TOG, MB_MESSAGE, 1, 3, 
+														MB_FN1, MB_FN2, MB_FN3, MB_FN4, MB_FN5, MB_ISRUNNO, MB_ISGROUP, MB_CREATER, MB_CREATED, 'Approved', 'success', CREATERNM, 
+														MB_D, MB_M, MB_Y, MB_PATTNO
+												FROM tbl_mailbox WHERE MB_NO = '$MB_NO' AND MB_STATUS = 3";
+								$this->db->query($s_MB);
+							endforeach;
+							// DELETE DRAFT ORIGINAL			
+							$this->m_mailbox->DeleteOriginalD($MB_NO);
+						}
+
+					}
+					else // P
+					{
+						$s_MB = "UPDATE tbl_mailbox SET MB_STATUS = 1, DOC_STATUS = 3, STATDESC = 'Approved', STATCOL = 'success' WHERE MB_NO = '$MB_NO' AND MB_STATUS = 3";
+						$this->db->query($s_MB);
+					}
 
 					// START : UPDATE STATUS
 						$completeName 	= $this->session->userdata['completeName'];
@@ -2457,7 +2499,7 @@ class C_mailbox  extends CI_Controller
 								 'MB_SUBJECT'	=> $MB_SUBJECT,
 								 'MB_DATE'		=> $MB_DATE,
 								 'MB_DATE1'		=> $MB_DATE1,
-								 'MB_FROM_ID'	=> $Emp_ID,
+								 'MB_FROM_ID'	=> $MB_FROM_ID,
 								 'MB_FROM'		=> $MB_FROM,
 								 'MB_TO_ID'		=> $MB_TO_ID,
 								 'MB_TO'		=> $MB_TO,

@@ -95,7 +95,7 @@ if (isset($_POST['submitSrch']))
 	$MB_CLASS	= $_POST['MB_CLASS_A'];
 	$MB_TYPE	= $_POST['MB_TYPE_A'];
 	$MB_DEPT	= $_POST['MB_DEPT_A'];
-    $MDEPT_CODE1= $MB_DEPT1;
+    $MDEPT_CODE1= $MB_DEPT;
 }
 
 $NO_01		= "J";			// HOLD
@@ -601,7 +601,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                             <input type="text" class="form-control" name="MB_TYPE_X" id="MB_TYPE_X" value="<?php echo $MB_TYPE_X; ?>">
                         </div>
                         <div class="form-group">
-                            <select name="MB_DEPT1" id="MB_DEPT1" class="form-control" disabled>
+                            <select name="MB_DEPT1" id="MB_DEPT1" class="form-control select2" onChange="ShowDocSelect(1);">
                                 <?php
 									if($MDEPT_CODE1 != 'JXXX')
 									{
@@ -609,7 +609,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 															B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
 														FROM tbl_mail_dept_emp A
 															INNER JOIN tbl_mail_dept B ON A.DEMP_DEPCODE = B.MDEPT_CODE
-														WHERE A.DEMP_EMPID = '$Emp_ID'
+														WHERE A.DEMP_EMPID = '$DefEmp_ID'
 										 				ORDER BY A.DEMP_DEPCODE";
 										$sqlDept	= $this->db->query($sqlDept)->result();
 										foreach($sqlDept as $rowDept) :
@@ -620,11 +620,35 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 											$MDEPT_NAME		= $rowDept->MDEPT_NAME;
 											$MDEPT_POSLEV	= $rowDept->MDEPT_POSLEV;
 											?>
-												<option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MDEPT_CODE1) { ?> selected <?php } ?>>
+												<option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MB_DEPT) { ?> selected <?php } ?>>
 													<?php //echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
                                                     <?php echo "$MDEPT_CODE - $MDEPT_DESC / $MDEPT_NAME"; ?>
 												</option>
 											<?php
+                                            if($MDEPT_POSLEV == 'DEPT')
+                                            {
+                                                $sqlDIR	= "SELECT A.DEMP_DEPCODE,
+                                                                    B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
+                                                                FROM tbl_mail_dept_emp A
+                                                                    INNER JOIN tbl_mail_dept B ON A.DEMP_DEPCODE = B.MDEPT_CODE
+                                                                WHERE B.MDEPT_POSLEV = 'BOD'
+                                                                ORDER BY A.DEMP_DEPCODE";
+                                                $sqlDIR	= $this->db->query($sqlDIR)->result();
+                                                foreach($sqlDIR as $rowDIR) :
+                                                    $DEMP_DEPCODE	= $rowDIR->DEMP_DEPCODE;
+                                                    $MDEPT_CODE		= $rowDIR->MDEPT_CODE;
+                                                    $MDEPT_DESC		= $rowDIR->MDEPT_DESC;
+                                                    $MDEPT_POSIT	= $rowDIR->MDEPT_POSIT;
+                                                    $MDEPT_NAME		= $rowDIR->MDEPT_NAME;
+                                                    $MDEPT_POSLEV	= $rowDIR->MDEPT_POSLEV;
+                                                    ?>
+                                                        <option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MB_DEPT) { ?> selected <?php } ?>>
+                                                            <?php //echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
+                                                            <?php echo "$MDEPT_CODE - $MDEPT_DESC / $MDEPT_NAME"; ?>
+                                                        </option>
+                                                    <?php
+                                                endforeach;
+                                            }
 										endforeach;
 									}
 									else
@@ -1160,7 +1184,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 	{
 		document.getElementById('MB_CLASS_A').value	= document.getElementById('MB_CLASS').value;
 		document.getElementById('MB_TYPE_A').value	= document.getElementById('MB_TYPE').value;
-		document.getElementById('MB_DEPT_A').value	= document.getElementById('MB_DEPT').value;
+		document.getElementById('MB_DEPT_A').value	= document.getElementById('MB_DEPT1').value;
 		document.frm.submitSrch.click();
 	}
 	

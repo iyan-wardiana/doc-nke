@@ -287,6 +287,12 @@ $MAIL_NO		= $MB_CODE;
                         </div>
                         <div class="form-group">
                             <?php
+                                $MB_TO1 = str_replace("|",", ", $MB_TO);
+                                echo "<strong>To : </strong>$MB_TO1";
+                            ?>
+                        </div>
+                        <div class="form-group">
+                            <?php
                                 echo "<strong>Subject : </strong>$MB_SUBJECT";
                             ?>
                         </div>

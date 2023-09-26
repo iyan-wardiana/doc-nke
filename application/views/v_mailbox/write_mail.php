@@ -608,7 +608,7 @@ echo "MB_DEPT : $MB_DEPT";
                                         $MT_CODE1	= $row->MT_CODE;
                                         $MT_DESC1	= $row->MT_DESC;
                                         ?>
-                                            <option value="<?php echo $MT_CODE1; ?>" <?php if($MT_CODE1 == $MB_TYPE) { ?> selected <?php } ?>>
+                                            <option value="<?php echo $MT_CODE1; ?>" <?php if($MT_CODE1 == $MB_TYPE1) { ?> selected <?php } ?>>
                                                 <?php echo "$MT_DESC1"; ?>
                                             </option>
                                         <?php

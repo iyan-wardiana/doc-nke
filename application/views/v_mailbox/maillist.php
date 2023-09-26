@@ -293,11 +293,11 @@ $Emp_DeptCode		= $this->session->userdata['Emp_DeptCode'];
 												else
 													$TIME_DIFFD	= date_format(date_create($MB_DATE), "d M");
 																								
-                                                $secRead_Mail	= site_url('c_mailbox/c_mailbox/read_mail/?id='.$this->url_encryption_helper->encode_url($MB_ID));
+                                                $secRead_Mail	= site_url('c_mailbox/c_mailbox/read_mail/?id='.$this->url_encryption_helper->encode_url($MB_NO));
 												
-												$secDL_Mail		= base_url().'index.php/c_mailbox/c_mailbox/DL_mail_I/?id='.$MB_ID;
-												$secPrint_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/print_mail_I/?id='.$MB_ID;
-												$secDel_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/trash_mail_process_idx_I/?id='.$MB_ID;
+												$secDL_Mail		= base_url().'index.php/c_mailbox/c_mailbox/DL_mail_I/?id='.$MB_NO;
+												$secPrint_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/print_mail_I/?id='.$MB_NO;
+												$secDel_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/trash_mail_process_idx_I/?id='.$MB_NO;
 															
                                                 if($MB_STATUS == 1)
 												{
@@ -324,9 +324,21 @@ $Emp_DeptCode		= $this->session->userdata['Emp_DeptCode'];
                                                     	<input type="checkbox" name="myChkAll" id="myChkAll<?php echo $myNewNo; ?>" value="<?php echo $myNewNo;?>" >
                                                         <input type="hidden" id="data<?php echo $myNewNo; ?>MB_ID" name="data[<?php echo $myNewNo; ?>][MB_ID]" value="<?php echo $MB_ID; ?>" width="10" size="15" readonly class="form-control">
                                                     </td>
-                                                    <td class="mailbox-name" nowrap>
+                                                    <td class="mailbox-name" width="150">
 														<?php
-                                                            $MB_FROMV	= cut_text2 ("$MB_FROM", 16);
+                                                            $FullName   = "";
+                                                            $s_EMPN     = "SELECT CONCAT(First_Name, ' ', Last_name) AS FullName FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
+                                                            $r_EMPN     = $this->db->query($s_EMPN);
+                                                            if($r_EMPN->num_rows() > 0)
+                                                            {
+                                                                foreach($r_EMPN->result() as $rw_EMPN):
+                                                                    $FullName   = $rw_EMPN->FullName;
+                                                                endforeach;
+                                                            }
+                                                            if($FullName == '')
+                                                                $FullName	= " ";
+
+                                                            $MB_FROMV	= cut_text2 ("$FullName", 16);
                                                             echo anchor($secRead_Mail, $MB_FROMV);
                                                         ?>
                                                     </td>

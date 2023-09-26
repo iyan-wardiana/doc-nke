@@ -249,22 +249,19 @@ $MAIL_NO		= $MB_CODE;
                                 <?php									
 									if($MB_DEPT != 'JXXX')
 									{
-										$sqlDept	= "SELECT A.DEMP_DEPCODE,
-															B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME
-														FROM tbl_mail_dept_emp A
-															INNER JOIN tbl_mail_dept B ON A.DEMP_DEPCODE = B.MDEPT_CODE
-														WHERE A.DEMP_EMPID = '$DefEmp_ID'
-										 				ORDER BY A.DEMP_DEPCODE";
+										$sqlDept	= "SELECT A.MDEPT_CODE, A.MDEPT_DESC, A.MDEPT_POSIT, A.MDEPT_NAME, A.MDEPT_POSLEV
+														FROM tbl_mail_dept A
+                                                        WHERE A.MDEPT_CODE = '$MB_DEPT'";
 										$sqlDept	= $this->db->query($sqlDept)->result();
 										foreach($sqlDept as $rowDept) :
-											$DEMP_DEPCODE	= $rowDept->DEMP_DEPCODE;
 											$MDEPT_CODE		= $rowDept->MDEPT_CODE;
 											$MDEPT_DESC		= $rowDept->MDEPT_DESC;
 											$MDEPT_POSIT	= $rowDept->MDEPT_POSIT;
 											$MDEPT_NAME		= $rowDept->MDEPT_NAME;
+											$MDEPT_POSLEV	= $rowDept->MDEPT_POSLEV;
 											?>
 												<option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MB_DEPT) { ?> selected <?php } ?>>
-													<?php echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
+													<?php echo "$MDEPT_CODE - $MDEPT_DESC / $MDEPT_NAME"; ?>
 												</option>
 											<?php
 										endforeach;
@@ -340,8 +337,8 @@ $MAIL_NO		= $MB_CODE;
                                 <?php
 							}
 							
-							$secDL_Mail		= base_url().'index.php/c_mailbox/c_mailbox/DL_mail_I/?id='.$MB_ID;
-							$secPrint_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/print_mail_I/?id='.$MB_ID;
+							$secDL_Mail		= base_url().'index.php/c_mailbox/c_mailbox/DL_mail_I/?id='.$MB_NO;
+							$secPrint_Mail 	= base_url().'index.php/c_mailbox/c_mailbox/print_mail_I/?id='.$MB_NO;
                         ?>                        
                         </div>
                     </div>

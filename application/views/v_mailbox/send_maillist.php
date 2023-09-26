@@ -222,7 +222,7 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                     <thead>
                                         <tr>
                                             <th width="5%">&nbsp;</th>
-                                            <th width="5%" class="mailbox-star" nowrap>Mail From</th>
+                                            <th width="5%" class="mailbox-star" nowrap>Mail To</th>
                                             <th width="7%" class="mailbox-name">Subject</th>
                                             <th width="65%" class="mailbox-subject">Message</th>
                                             <th width="5%" class="mailbox-date">Receipt</th>
@@ -334,24 +334,28 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                                                     	<input type="checkbox" name="myChkAll" id="myChkAll<?php echo $myNewNo; ?>" value="<?php echo $myNewNo;?>" >
                                                         <input type="hidden" id="data<?php echo $myNewNo; ?>MBS_ID" name="data[<?php echo $myNewNo; ?>][MBS_ID]" value="<?php echo $MBS_ID; ?>" width="10" size="15" readonly class="form-control">
                                                     </td>
-                                                    <td class="mailbox-name" nowrap>
+                                                    <td class="mailbox-name" width="150">
                                                     	<a href="<?php echo $secRead_Mail; ?>">
 															<?php
 																$FullName   = "";
-																$s_EMPN     = "SELECT CONCAT(First_Name, ' ', Last_name) AS FullName FROM tbl_employee WHERE Emp_ID = '$MBS_FROM_ID'";
+																$MBS_TO_ID1 = str_replace("|", "','", $MBS_TO_ID);
+																$s_EMPN     = "SELECT CONCAT(First_Name, ' ', Last_name) AS FullName FROM tbl_employee WHERE Emp_ID IN ('$MBS_TO_ID1')";
 																$r_EMPN     = $this->db->query($s_EMPN);
 																if($r_EMPN->num_rows() > 0)
 																{
 																	foreach($r_EMPN->result() as $rw_EMPN):
-																		$FullName   = $rw_EMPN->FullName;
+																		$FullName1[]   = $rw_EMPN->FullName;
 																	endforeach;
+																	$FullName 	= implode(", ", $FullName1);
+																	// echo var_dump($FullName);
 																}
-																if($FullName == '')
-																	$FullName	= " ";
+																// if($FullName == '')
+																// 	$FullName	= " ";
 																// $FullNameV	= cut_text2 ("$FullName", 16);
 																// echo anchor($secUpdate_Mail, $FullNameV);
                                                                 // echo cut_text2 ("$MBS_TO", 16);
-                                                                echo cut_text2 ("$FullName", 16);
+                                                                // echo cut_text2 ("$FullName", 16);
+                                                                echo $FullName;
                                                             ?>
                                                         </a>
                                                     </td>
