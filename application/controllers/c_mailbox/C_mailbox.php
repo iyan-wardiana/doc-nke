@@ -109,7 +109,55 @@ class C_mailbox  extends CI_Controller
 			redirect('Auth');
 		}
 	}
-	
+		
+	function write_mail($offset=0) // U
+	{
+		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
+		$sqlApp 		= "SELECT * FROM tappname";
+		$resultaApp = $this->db->query($sqlApp)->result();
+		foreach($resultaApp as $therow) :
+			$appName = $therow->app_name;		
+		endforeach;
+		
+		if ($this->session->userdata('login') == TRUE)
+		{
+			$DefEmp_ID	= $_GET['id'];
+			$DefEmp_ID	= $this->url_encryption_helper->decode_url($DefEmp_ID);
+					
+			$data['title'] 			= $appName;
+			$data['task']			= 'add';
+			$data['h2_title']		= 'Mailbox';
+			$data['MenuApp'] 		= 'MN381';
+			$data['form_action']	= site_url('c_mailbox/c_mailbox/write_mail_process');
+			
+			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
+			$data["countInbox"] 	= $tot_Inbox;
+			
+			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
+			$data["countInbox_ur"] 	= $tot_Inbox_ur;
+			
+			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
+			$data["countSent"] 		= $tot_Sent;
+			
+			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
+			$data["countDraft"] 	= $tot_Draft;
+			
+			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
+			$data["countJunk"] 		= $tot_Junk;
+			
+			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
+			$data["countTrash"] 	= $tot_Trash;
+	 
+			$data['viewmail']		= $this->m_mailbox->get_all_mail_sent($DefEmp_ID)->result();
+			
+			$this->load->view('v_mailbox/write_mail', $data);
+		}
+		else
+		{
+			redirect('Auth');
+		}
+	}
+		
 	function sent_mail($offset=0) // U - index
 	{
 		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
@@ -156,9 +204,9 @@ class C_mailbox  extends CI_Controller
 			redirect('Auth');
 		}
 	}
-	
-	function write_mail($offset=0) // U
-	{
+
+	function draft_mail() // U - index
+	{	
 		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
 		$sqlApp 		= "SELECT * FROM tappname";
 		$resultaApp = $this->db->query($sqlApp)->result();
@@ -170,12 +218,11 @@ class C_mailbox  extends CI_Controller
 		{
 			$DefEmp_ID	= $_GET['id'];
 			$DefEmp_ID	= $this->url_encryption_helper->decode_url($DefEmp_ID);
-					
+			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
+			
 			$data['title'] 			= $appName;
-			$data['task']			= 'add';
 			$data['h2_title']		= 'Mailbox';
 			$data['MenuApp'] 		= 'MN381';
-			$data['form_action']	= site_url('c_mailbox/c_mailbox/write_mail_process');
 			
 			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
 			$data["countInbox"] 	= $tot_Inbox;
@@ -195,9 +242,489 @@ class C_mailbox  extends CI_Controller
 			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
 			$data["countTrash"] 	= $tot_Trash;
 	 
-			$data['viewmail']		= $this->m_mailbox->get_all_mail_sent($DefEmp_ID)->result();
+			$data['viewmail']		= $this->m_mailbox->get_all_mail_draft($DefEmp_ID)->result();
 			
-			$this->load->view('v_mailbox/write_mail', $data);
+			$this->load->view('v_mailbox/draft_maillist', $data);
+		}
+		else
+		{
+			redirect('Auth');
+		}
+	}
+		
+	function trash_mail() // U - index
+	{	
+		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
+		$sqlApp 		= "SELECT * FROM tappname";
+		$resultaApp = $this->db->query($sqlApp)->result();
+		foreach($resultaApp as $therow) :
+			$appName = $therow->app_name;		
+		endforeach;
+		
+		if ($this->session->userdata('login') == TRUE)
+		{
+			$DefEmp_ID	= $_GET['id'];
+			$DefEmp_ID	= $this->url_encryption_helper->decode_url($DefEmp_ID);
+			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
+			
+			$data['title'] 			= $appName;
+			$data['h2_title']		= 'Mailbox';
+			$data['MenuApp'] 		= 'MN381';
+			
+			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
+			$data["countInbox"] 	= $tot_Inbox;
+			
+			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
+			$data["countInbox_ur"] 	= $tot_Inbox_ur;
+			
+			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
+			$data["countSent"] 		= $tot_Sent;
+			
+			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
+			$data["countDraft"] 	= $tot_Draft;
+			
+			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
+			$data["countJunk"] 		= $tot_Junk;
+			
+			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
+			$data["countTrash"] 	= $tot_Trash;
+	 
+			$data['viewmail']		= $this->m_mailbox->get_all_mail_trash($DefEmp_ID)->result();
+			
+			$this->load->view('v_mailbox/trash_maillist', $data);
+		}
+		else
+		{
+			redirect('Auth');
+		}
+	}
+	
+	function draft_mail_update() // U - index
+	{
+		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
+		$sqlApp 		= "SELECT * FROM tappname";
+		$resultaApp = $this->db->query($sqlApp)->result();
+		foreach($resultaApp as $therow) :
+			$appName = $therow->app_name;		
+		endforeach;
+		
+		if ($this->session->userdata('login') == TRUE)
+		{
+			$MB_NO		= $_GET['id'];
+			$MB_NO		= $this->url_encryption_helper->decode_url($MB_NO);
+			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
+			
+			$data['title'] 			= $appName;
+			$data['task']			= 'edit';
+			$data['h2_title']		= 'Mailbox';
+			$data['MenuApp'] 		= 'MN381';
+			$data['form_action']	= site_url('c_mailbox/c_mailbox/draft_mail_update_process');
+			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process/?id='.$this->url_encryption_helper->encode_url($MB_NO));
+			
+			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
+			$data["countInbox"] 	= $tot_Inbox;
+			
+			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
+			$data["countInbox_ur"] 	= $tot_Inbox_ur;
+			
+			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
+			$data["countSent"] 		= $tot_Sent;
+			
+			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
+			$data["countDraft"] 	= $tot_Draft;
+			
+			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
+			$data["countJunk"] 		= $tot_Junk;
+			
+			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
+			$data["countTrash"] 	= $tot_Trash;
+	 
+			$data['viewmail']		= $this->m_mailbox->get_all_mail_draft($DefEmp_ID)->result();
+			
+			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_NO)->row();
+			
+			$data['default']['MB_ID'] 		= $getMailDetail->MB_ID;
+			$data['default']['MB_NO'] 		= $getMailDetail->MB_NO;
+			$data['default']['MB_CODE'] 	= $getMailDetail->MB_CODE;
+			$data['default']['MB_CLASS'] 	= $getMailDetail->MB_CLASS;
+			$data['default']['MB_TYPE'] 	= $getMailDetail->MB_TYPE;
+			$data['default']['MB_TYPE_X'] 	= $getMailDetail->MB_TYPE_X;
+			$data['default']['MB_DEPT'] 	= $getMailDetail->MB_DEPT;
+			$data['default']['MB_CODE'] 	= $getMailDetail->MB_CODE;
+			$data['default']['MB_PARENTC'] 	= $getMailDetail->MB_PARENTC;
+			$data['default']['MB_SUBJECT'] 	= $getMailDetail->MB_SUBJECT;
+			$data['default']['MB_DATE'] 	= $getMailDetail->MB_DATE;
+			$data['default']['MB_DATE1'] 	= $getMailDetail->MB_DATE1;
+			$data['default']['MB_READD'] 	= $getMailDetail->MB_READD;
+			$data['default']['MB_FROM_ID'] 	= $getMailDetail->MB_FROM_ID;
+			$data['default']['MB_FROM']		= $getMailDetail->MB_FROM;
+			$data['default']['MB_TO_ID']	= $getMailDetail->MB_TO_ID;
+			$data['default']['MB_TO']		= $getMailDetail->MB_TO;
+			$data['default']['MB_TO_IDG']	= $getMailDetail->MB_TO_IDG;
+			$data['default']['MB_TOG']		= $getMailDetail->MB_TOG;
+			$data['default']['MB_MESSAGE'] 	= $getMailDetail->MB_MESSAGE;
+			$data['default']['MB_STATUS'] 	= $getMailDetail->MB_STATUS;	
+			$data['default']['DOC_STATUS'] 	= $getMailDetail->DOC_STATUS;	
+			$data['default']['MB_FN1']		= $getMailDetail->MB_FN1;
+			$data['default']['MB_FN2']		= $getMailDetail->MB_FN2;
+			$data['default']['MB_FN3']		= $getMailDetail->MB_FN3;
+			$data['default']['MB_FN4']		= $getMailDetail->MB_FN4;
+			$data['default']['MB_FN5']		= $getMailDetail->MB_FN5;		
+			$data['default']['MB_ISRUNNO']	= $getMailDetail->MB_ISRUNNO;
+			$data['default']['MB_D']		= $getMailDetail->MB_D;
+			$data['default']['MB_M']		= $getMailDetail->MB_M;
+			$data['default']['MB_Y']		= $getMailDetail->MB_Y;
+			$data['default']['MB_PATTNO']	= $getMailDetail->MB_PATTNO;
+			
+			$this->load->view('v_mailbox/update_maillist', $data);
+		}
+		else
+		{
+			redirect('Auth');
+		}
+	}
+	
+	function write_mail_process() // U
+	{
+		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
+		
+		$sqlApp 		= "SELECT * FROM tappname";
+		$resultaApp = $this->db->query($sqlApp)->result();
+		foreach($resultaApp as $therow) :
+			$appName = $therow->app_name;		
+		endforeach;	
+
+		$DefEmp_ID 	= $this->session->userdata['Emp_ID']; // CREATER
+		$CREATED 	= date('Y-m-d H:i:s');
+		
+		if ($this->session->userdata('login') == TRUE)
+		{		
+			$this->db->trans_begin();
+			
+			date_default_timezone_set("Asia/Jakarta");
+			
+			$MB_NO		= $this->input->post('MB_NO');				// 
+			$MB_CODE	= $this->input->post('MB_CODE');				// 
+			$MB_CLASS	= $this->input->post('MB_CLASS');				// 
+			$MB_TYPE 	= $this->input->post('MB_TYPE');				// 
+			$MB_TYPE_X1	= $this->input->post('MB_TYPE_X');				// 
+			
+			$pecah 	= explode("\n", $MB_TYPE_X1);
+			// string kosong inisialisasi
+			$text 	= "";
+			$vgv	= count($pecah);
+			// untuk setiap substring hasil pecahan, sisipkan <p> di awal dan </p> di akhir
+			// lalu menggabungnya menjadi satu string utuh $text
+			for ($i=0; $i<=count($pecah)-1; $i++)
+			{
+				$part = str_replace($pecah[$i], "".$pecah[$i]."<br>", $pecah[$i]);
+				$text .= $part;
+			}
+			$MB_TYPE_X	= $text;
+			
+			$MB_DEPT 	= $this->input->post('MB_DEPT');
+
+			$MB_PARENTC	= "";											// 
+			$MB_SUBJECT	= $this->input->post('MB_SUBJECT');				// 
+			$MB_DATE	= date('Y-m-d');								// 
+			$MB_DATE1	= date('Y-m-d H:i:s');							// 
+			
+			// GET MAIL FROM
+				$Email		= '';
+				$MB_FROM_ID	= $this->input->post('Emp_ID'); // MAIL From
+				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
+				$sqlEmp		= $this->db->query($sqlEmp)->result();
+				foreach($sqlEmp as $row) :
+					$Email		= $row->Email;
+				endforeach;
+			
+			$MB_FROM	= $Email;										// 
+			$MB_TO_ID 	= $this->input->post('MB_TO_ID');					// 			
+			$MB_TOG 	= $this->input->post('MB_TOG');					// 			
+			$MB_MESSAGE	= $this->input->post('MB_MESSAGE');
+			$MB_STATUS	= $this->input->post('MB_STATUS');				// 1. New/Unread, 2. Read, 3. Draft, 4. Junk, 5. Delete
+			$DOC_STATUS	= $this->input->post('DOC_STATUS');				// 1. New, 2. Confirm, 3. Approve
+			$MB_D		= date('d');
+			$MB_M		= date('m');
+			$MB_Y		= date('Y');
+			$MB_H		= date('H');
+			$MB_I		= date('i');
+			$MB_S		= date('s');
+			$MB_NO		= "$MB_Y$MB_M$MB_D$MB_H$MB_I$MB_S";
+
+			if(count($MB_TO_ID) > 1) $MB_ISGROUP = 'G';
+			else $MB_ISGROUP = 'P';
+
+			$MB_TO 		= "";
+			$joinQEmp 	= implode("','", $MB_TO_ID);
+			$s_Email 	= "SELECT Email FROM tbl_employee WHERE Emp_ID IN ('$joinQEmp') AND Email != ''";
+			$r_Email 	= $this->db->query($s_Email);
+			if($r_Email->num_rows() > 0)
+			{
+				foreach($r_Email->result() as $rw_Email):
+					$Email_Emp[] = $rw_Email->Email;
+				endforeach;
+				$MB_TO 	= implode("|", $Email_Emp);
+			}
+
+			$MB_TO_ID 	= implode("|", $MB_TO_ID);
+			
+			// FOR MANY ATTACHMENT
+			// ATTACHMENT 1
+				$file1 		= $_FILES['attachment1'];
+				$file_name1	= $file1['name'];			
+				$MB_FN1		= $file_name1;
+				
+				if($file_name1 != '')
+				{				
+					$filename1 	= $_FILES["attachment1"]["name"];
+					$source1 	= $_FILES["attachment1"]["tmp_name"];
+					$type1 		= $_FILES["attachment1"]["type"];
+					
+					$name1 		= explode(".", $filename1);
+					$fileExt1	= $name1[1];
+					
+					$target_path = "mail_attachment/".$filename1;  // change this to the correct site path
+						
+					$myPath 	= "mail_attachment/$filename1";
+					
+					if (file_exists($myPath) == true)
+					{
+						unlink($myPath);
+					}
+					
+					if(move_uploaded_file($source1, $target_path))
+					{
+						$message1 			= "Mail Attachment 1 Sent.";
+						$data['message1'] 	= $message1;
+					}
+					else 
+					{
+						$message1			= "There was a problem with the upload attachment 1. Please try again.";
+						$data['message1'] 	= $message1;
+					}
+				}
+				
+			// ATTACHMENT 2
+				$file2 		= $_FILES['attachment2'];
+				$file_name2	= $file2['name'];			
+				$MB_FN2		= $file_name2;
+				
+				if($file_name2 != '')
+				{				
+					$filename2 	= $_FILES["attachment2"]["name"];
+					$source2 	= $_FILES["attachment2"]["tmp_name"];
+					$type2 		= $_FILES["attachment2"]["type"];
+					
+					$name2 		= explode(".", $filename2);
+					$fileExt2	= $name2[1];
+					
+					$target_path = "mail_attachment/".$filename2;  // change this to the correct site path
+						
+					$myPath 	= "mail_attachment/$filename2";
+					
+					if (file_exists($myPath) == true)
+					{
+						unlink($myPath);
+					}
+					
+					if(move_uploaded_file($source2, $target_path))
+					{
+						$message2 			= "Mail Attachment 2 Sent.";
+						$data['message2'] 	= $message2;
+					}
+					else 
+					{
+						$message2			= "There was a problem with the upload attachment 2. Please try again.";
+						$data['message2'] 	= $message2;
+					}
+				}
+				
+			// ATTACHMENT 3
+				$file3 		= $_FILES['attachment3'];
+				$file_name3	= $file3['name'];			
+				$MB_FN3		= $file_name3;
+				
+				if($file_name3 != '')
+				{				
+					$filename3 	= $_FILES["attachment3"]["name"];
+					$source3 	= $_FILES["attachment3"]["tmp_name"];
+					$type3 		= $_FILES["attachment3"]["type"];
+					
+					$name3 		= explode(".", $filename3);
+					$fileExt3	= $name3[1];
+					
+					$target_path = "mail_attachment/".$filename3;  // change this to the correct site path
+						
+					$myPath 	= "mail_attachment/$filename3";
+					
+					if (file_exists($myPath) == true)
+					{
+						unlink($myPath);
+					}
+					
+					if(move_uploaded_file($source3, $target_path))
+					{
+						$message3 			= "Mail Attachment 3 Sent.";
+						$data['message3'] 	= $message3;
+					}
+					else 
+					{
+						$message3			= "There was a problem with the upload attachment 3. Please try again.";
+						$data['message3'] 	= $message3;
+					}
+				}
+				
+			// ATTACHMENT 4
+				$file4 		= $_FILES['attachment4'];
+				$file_name4	= $file4['name'];			
+				$MB_FN4		= $file_name4;
+				
+				if($file_name4 != '')
+				{				
+					$filename4 	= $_FILES["attachment4"]["name"];
+					$source4 	= $_FILES["attachment4"]["tmp_name"];
+					$type4 		= $_FILES["attachment4"]["type"];
+					
+					$name4 		= explode(".", $filename4);
+					$fileExt4	= $name4[1];
+					
+					$target_path = "mail_attachment/".$filename4;  // change this to the correct site path
+						
+					$myPath 	= "mail_attachment/$filename4";
+					
+					if (file_exists($myPath) == true)
+					{
+						unlink($myPath);
+					}
+					
+					if(move_uploaded_file($source4, $target_path))
+					{
+						$message4 			= "Mail Attachment 4 Sent.";
+						$data['message4'] 	= $message4;
+					}
+					else 
+					{
+						$message4			= "There was a problem with the upload attachment 4. Please try again.";
+						$data['message4'] 	= $message4;
+					}
+				}
+				
+			// ATTACHMENT 5
+				$file5 		= $_FILES['attachment5'];
+				$file_name5	= $file5['name'];			
+				$MB_FN5		= $file_name5;
+				
+				if($file_name5 != '')
+				{				
+					$filename5 	= $_FILES["attachment5"]["name"];
+					$source5 	= $_FILES["attachment5"]["tmp_name"];
+					$type5 		= $_FILES["attachment5"]["type"];
+					
+					$name5 		= explode(".", $filename5);
+					$fileExt5	= $name5[1];
+					
+					$target_path = "mail_attachment/".$filename5;  // change this to the correct site path
+						
+					$myPath 	= "mail_attachment/$filename5";
+					
+					if (file_exists($myPath) == true)
+					{
+						unlink($myPath);
+					}
+					
+					if(move_uploaded_file($source5, $target_path))
+					{
+						$message5 			= "Mail Attachment 5 Sent.";
+						$data['message5'] 	= $message5;
+					}
+					else 
+					{
+						$message5			= "There was a problem with the upload attachment 5. Please try again.";
+						$data['message5'] 	= $message5;
+					}
+				}
+
+				if($MB_TOG != '')
+				{
+					$joinQMB_TOG 	= implode("','", $MB_TOG);
+					$Emp_IDG 		= [];
+					$s_TOG 			= "SELECT Emp_ID FROM tbl_mailgroup_detail WHERE MG_CODE IN ('$joinQMB_TOG') AND Emp_ID NOT IN ('$joinQEmp')";
+					$r_TOG			= $this->db->query($s_TOG);
+					if($r_TOG->num_rows() > 0)
+					{
+						foreach($r_TOG->result() as $rw_TOG):
+							$Emp_IDG[] = $rw_TOG->Emp_IDG;
+						endforeach;
+
+						$joinQEmp 	= implode("','", $Emp_IDG);
+						$s_Email 	= "SELECT Email FROM tbl_employee WHERE Emp_ID IN ('$joinQEmp') AND Email != ''";
+						$r_Email 	= $this->db->query($s_Email);
+						if($r_Email->num_rows() > 0)
+						{
+							foreach($r_Email->result() as $rw_Email):
+								$Email_Emp[] = $rw_Email->Email;
+							endforeach;
+							$MB_TOG 	= implode("|", $Email_Emp);
+							$MB_TO_IDG 	= implode("|", $Emp_IDG);
+						}
+					}
+				}
+
+				// INSERT INTO DRAFT => default (MB_STATUS = 3)
+					$insMail = array(
+									'MB_NO' 	=> $MB_NO,
+									'MB_CLASS' 	=> $MB_CLASS,
+									'MB_TYPE'	=> $MB_TYPE,
+									'MB_TYPE_X'	=> $MB_TYPE_X,
+									'MB_DEPT'	=> $MB_DEPT,
+									'MB_CODE'	=> $MB_CODE,
+									'MB_PARENTC'=> $MB_PARENTC,
+									'MB_SUBJECT'=> $MB_SUBJECT,
+									'MB_DATE'	=> $MB_DATE,
+									'MB_DATE1'	=> $MB_DATE1,
+									'MB_FROM_ID'=> $MB_FROM_ID,
+									'MB_FROM'	=> $MB_FROM,
+									'MB_TO_ID'	=> $MB_TO_ID,
+									'MB_TO'		=> $MB_TO,
+									'MB_TO_IDG'	=> $MB_TO_IDG,
+									'MB_TOG'	=> $MB_TOG,
+									'MB_MESSAGE'=> $MB_MESSAGE,
+									'MB_STATUS'	=> $MB_STATUS, // Default 3. Draft
+									'DOC_STATUS'=> $DOC_STATUS, // DOC_STATUS = 1 OR DOC_STATUS = 2
+									'MB_FN1'	=> $file_name1,
+									'MB_FN2'	=> $file_name2,
+									'MB_FN3'	=> $file_name3,
+									'MB_FN4'	=> $file_name4,
+									'MB_FN5'	=> $file_name5,
+									'MB_ISRUNNO'=> 'Y',
+									'MB_ISGROUP'=> $MB_ISGROUP,
+									'MB_CREATER'=> $DefEmp_ID,
+									'MB_CREATED'=> $CREATED,
+									'MB_D'		=> $MB_D,
+									'MB_M'		=> $MB_M,
+									'MB_Y'		=> $MB_Y);
+					$this->m_mailbox->add($insMail);								
+				// INSERT INTO DRAFT
+			
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->db->trans_rollback();
+			}
+			else
+			{
+				$this->db->trans_commit();
+			}
+			
+			if($MB_STATUS == 1)
+			{
+				$url	= site_url('c_mailbox/c_mailbox/sent_mail/?id='.$this->url_encryption_helper->encode_url($DefEmp_ID));
+			}
+			else
+			{
+				$url	= site_url('c_mailbox/c_mailbox/draft_mail/?id='.$this->url_encryption_helper->encode_url($DefEmp_ID));
+			}
+			redirect($url);
 		}
 		else
 		{
@@ -695,355 +1222,7 @@ class C_mailbox  extends CI_Controller
 			redirect('Auth');
 		}
 	}
-	
-	function write_mail_process() // U
-	{
-		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
-		
-		$sqlApp 		= "SELECT * FROM tappname";
-		$resultaApp = $this->db->query($sqlApp)->result();
-		foreach($resultaApp as $therow) :
-			$appName = $therow->app_name;		
-		endforeach;	
 
-		$DefEmp_ID 	= $this->session->userdata['Emp_ID']; // CREATER
-		$CREATED 	= date('Y-m-d H:i:s');
-		
-		if ($this->session->userdata('login') == TRUE)
-		{		
-			$this->db->trans_begin();
-			
-			date_default_timezone_set("Asia/Jakarta");
-			
-			$MB_NO		= $this->input->post('MB_NO');				// 
-			$MB_CODE	= $this->input->post('MB_CODE');				// 
-			$MB_CLASS	= $this->input->post('MB_CLASS');				// 
-			$MB_TYPE 	= $this->input->post('MB_TYPE');				// 
-			$MB_TYPE_X1	= $this->input->post('MB_TYPE_X');				// 
-			
-			$pecah 	= explode("\n", $MB_TYPE_X1);
-			// string kosong inisialisasi
-			$text 	= "";
-			$vgv	= count($pecah);
-			// untuk setiap substring hasil pecahan, sisipkan <p> di awal dan </p> di akhir
-			// lalu menggabungnya menjadi satu string utuh $text
-			for ($i=0; $i<=count($pecah)-1; $i++)
-			{
-				$part = str_replace($pecah[$i], "".$pecah[$i]."<br>", $pecah[$i]);
-				$text .= $part;
-			}
-			$MB_TYPE_X	= $text;
-			
-			$MB_DEPT 	= $this->input->post('MB_DEPT');
-
-			$MB_PARENTC	= "";											// 
-			$MB_SUBJECT	= $this->input->post('MB_SUBJECT');				// 
-			$MB_DATE	= date('Y-m-d');								// 
-			$MB_DATE1	= date('Y-m-d H:i:s');							// 
-			
-			// GET MAIL FROM
-				$Email		= '';
-				$MB_FROM_ID	= $this->input->post('Emp_ID'); // MAIL From
-				$sqlEmp		= "SELECT Email FROM tbl_employee WHERE Emp_ID = '$MB_FROM_ID'";
-				$sqlEmp		= $this->db->query($sqlEmp)->result();
-				foreach($sqlEmp as $row) :
-					$Email		= $row->Email;
-				endforeach;
-			
-			$MB_FROM	= $Email;										// 
-			$MB_TO_ID 	= $this->input->post('MB_TO_ID');					// 			
-			$MB_TOG 	= $this->input->post('MB_TOG');					// 			
-			$MB_MESSAGE	= $this->input->post('MB_MESSAGE');
-			$MB_STATUS	= $this->input->post('MB_STATUS');				// 1. New/Unread, 2. Read, 3. Draft, 4. Junk, 5. Delete
-			$DOC_STATUS	= $this->input->post('DOC_STATUS');				// 1. New, 2. Confirm, 3. Approve
-			$MB_D		= date('d');
-			$MB_M		= date('m');
-			$MB_Y		= date('Y');
-			$MB_H		= date('H');
-			$MB_I		= date('i');
-			$MB_S		= date('s');
-			$MB_NO		= "$MB_Y$MB_M$MB_D$MB_H$MB_I$MB_S";
-
-			if(count($MB_TO_ID) > 1) $MB_ISGROUP = 'G';
-			else $MB_ISGROUP = 'P';
-
-			$MB_TO 		= "";
-			$joinQEmp 	= implode("','", $MB_TO_ID);
-			$s_Email 	= "SELECT Email FROM tbl_employee WHERE Emp_ID IN ('$joinQEmp') AND Email != ''";
-			$r_Email 	= $this->db->query($s_Email);
-			if($r_Email->num_rows() > 0)
-			{
-				foreach($r_Email->result() as $rw_Email):
-					$Email_Emp[] = $rw_Email->Email;
-				endforeach;
-				$MB_TO 	= implode("|", $Email_Emp);
-			}
-
-			$MB_TO_ID 	= implode("|", $MB_TO_ID);
-			
-			// FOR MANY ATTACHMENT
-			// ATTACHMENT 1
-				$file1 		= $_FILES['attachment1'];
-				$file_name1	= $file1['name'];			
-				$MB_FN1		= $file_name1;
-				
-				if($file_name1 != '')
-				{				
-					$filename1 	= $_FILES["attachment1"]["name"];
-					$source1 	= $_FILES["attachment1"]["tmp_name"];
-					$type1 		= $_FILES["attachment1"]["type"];
-					
-					$name1 		= explode(".", $filename1);
-					$fileExt1	= $name1[1];
-					
-					$target_path = "mail_attachment/".$filename1;  // change this to the correct site path
-						
-					$myPath 	= "mail_attachment/$filename1";
-					
-					if (file_exists($myPath) == true)
-					{
-						unlink($myPath);
-					}
-					
-					if(move_uploaded_file($source1, $target_path))
-					{
-						$message1 			= "Mail Attachment 1 Sent.";
-						$data['message1'] 	= $message1;
-					}
-					else 
-					{
-						$message1			= "There was a problem with the upload attachment 1. Please try again.";
-						$data['message1'] 	= $message1;
-					}
-				}
-				
-			// ATTACHMENT 2
-				$file2 		= $_FILES['attachment2'];
-				$file_name2	= $file2['name'];			
-				$MB_FN2		= $file_name2;
-				
-				if($file_name2 != '')
-				{				
-					$filename2 	= $_FILES["attachment2"]["name"];
-					$source2 	= $_FILES["attachment2"]["tmp_name"];
-					$type2 		= $_FILES["attachment2"]["type"];
-					
-					$name2 		= explode(".", $filename2);
-					$fileExt2	= $name2[1];
-					
-					$target_path = "mail_attachment/".$filename2;  // change this to the correct site path
-						
-					$myPath 	= "mail_attachment/$filename2";
-					
-					if (file_exists($myPath) == true)
-					{
-						unlink($myPath);
-					}
-					
-					if(move_uploaded_file($source2, $target_path))
-					{
-						$message2 			= "Mail Attachment 2 Sent.";
-						$data['message2'] 	= $message2;
-					}
-					else 
-					{
-						$message2			= "There was a problem with the upload attachment 2. Please try again.";
-						$data['message2'] 	= $message2;
-					}
-				}
-				
-			// ATTACHMENT 3
-				$file3 		= $_FILES['attachment3'];
-				$file_name3	= $file3['name'];			
-				$MB_FN3		= $file_name3;
-				
-				if($file_name3 != '')
-				{				
-					$filename3 	= $_FILES["attachment3"]["name"];
-					$source3 	= $_FILES["attachment3"]["tmp_name"];
-					$type3 		= $_FILES["attachment3"]["type"];
-					
-					$name3 		= explode(".", $filename3);
-					$fileExt3	= $name3[1];
-					
-					$target_path = "mail_attachment/".$filename3;  // change this to the correct site path
-						
-					$myPath 	= "mail_attachment/$filename3";
-					
-					if (file_exists($myPath) == true)
-					{
-						unlink($myPath);
-					}
-					
-					if(move_uploaded_file($source3, $target_path))
-					{
-						$message3 			= "Mail Attachment 3 Sent.";
-						$data['message3'] 	= $message3;
-					}
-					else 
-					{
-						$message3			= "There was a problem with the upload attachment 3. Please try again.";
-						$data['message3'] 	= $message3;
-					}
-				}
-				
-			// ATTACHMENT 4
-				$file4 		= $_FILES['attachment4'];
-				$file_name4	= $file4['name'];			
-				$MB_FN4		= $file_name4;
-				
-				if($file_name4 != '')
-				{				
-					$filename4 	= $_FILES["attachment4"]["name"];
-					$source4 	= $_FILES["attachment4"]["tmp_name"];
-					$type4 		= $_FILES["attachment4"]["type"];
-					
-					$name4 		= explode(".", $filename4);
-					$fileExt4	= $name4[1];
-					
-					$target_path = "mail_attachment/".$filename4;  // change this to the correct site path
-						
-					$myPath 	= "mail_attachment/$filename4";
-					
-					if (file_exists($myPath) == true)
-					{
-						unlink($myPath);
-					}
-					
-					if(move_uploaded_file($source4, $target_path))
-					{
-						$message4 			= "Mail Attachment 4 Sent.";
-						$data['message4'] 	= $message4;
-					}
-					else 
-					{
-						$message4			= "There was a problem with the upload attachment 4. Please try again.";
-						$data['message4'] 	= $message4;
-					}
-				}
-				
-			// ATTACHMENT 5
-				$file5 		= $_FILES['attachment5'];
-				$file_name5	= $file5['name'];			
-				$MB_FN5		= $file_name5;
-				
-				if($file_name5 != '')
-				{				
-					$filename5 	= $_FILES["attachment5"]["name"];
-					$source5 	= $_FILES["attachment5"]["tmp_name"];
-					$type5 		= $_FILES["attachment5"]["type"];
-					
-					$name5 		= explode(".", $filename5);
-					$fileExt5	= $name5[1];
-					
-					$target_path = "mail_attachment/".$filename5;  // change this to the correct site path
-						
-					$myPath 	= "mail_attachment/$filename5";
-					
-					if (file_exists($myPath) == true)
-					{
-						unlink($myPath);
-					}
-					
-					if(move_uploaded_file($source5, $target_path))
-					{
-						$message5 			= "Mail Attachment 5 Sent.";
-						$data['message5'] 	= $message5;
-					}
-					else 
-					{
-						$message5			= "There was a problem with the upload attachment 5. Please try again.";
-						$data['message5'] 	= $message5;
-					}
-				}
-
-				if($MB_TOG != '')
-				{
-					$joinQMB_TOG 	= implode("','", $MB_TOG);
-					$Emp_IDG 		= [];
-					$s_TOG 			= "SELECT Emp_ID FROM tbl_mailgroup_detail WHERE MG_CODE IN ('$joinQMB_TOG') AND Emp_ID NOT IN ('$joinQEmp')";
-					$r_TOG			= $this->db->query($s_TOG);
-					if($r_TOG->num_rows() > 0)
-					{
-						foreach($r_TOG->result() as $rw_TOG):
-							$Emp_IDG[] = $rw_TOG->Emp_IDG;
-						endforeach;
-
-						$joinQEmp 	= implode("','", $Emp_IDG);
-						$s_Email 	= "SELECT Email FROM tbl_employee WHERE Emp_ID IN ('$joinQEmp') AND Email != ''";
-						$r_Email 	= $this->db->query($s_Email);
-						if($r_Email->num_rows() > 0)
-						{
-							foreach($r_Email->result() as $rw_Email):
-								$Email_Emp[] = $rw_Email->Email;
-							endforeach;
-							$MB_TOG 	= implode("|", $Email_Emp);
-							$MB_TO_IDG 	= implode("|", $Emp_IDG);
-						}
-					}
-				}
-
-				// INSERT INTO DRAFT => default (MB_STATUS = 3)
-					$insMail = array(
-									'MB_NO' 	=> $MB_NO,
-									'MB_CLASS' 	=> $MB_CLASS,
-									'MB_TYPE'	=> $MB_TYPE,
-									'MB_TYPE_X'	=> $MB_TYPE_X,
-									'MB_DEPT'	=> $MB_DEPT,
-									'MB_CODE'	=> $MB_CODE,
-									'MB_PARENTC'=> $MB_PARENTC,
-									'MB_SUBJECT'=> $MB_SUBJECT,
-									'MB_DATE'	=> $MB_DATE,
-									'MB_DATE1'	=> $MB_DATE1,
-									'MB_FROM_ID'=> $MB_FROM_ID,
-									'MB_FROM'	=> $MB_FROM,
-									'MB_TO_ID'	=> $MB_TO_ID,
-									'MB_TO'		=> $MB_TO,
-									'MB_TO_IDG'	=> $MB_TO_IDG,
-									'MB_TOG'	=> $MB_TOG,
-									'MB_MESSAGE'=> $MB_MESSAGE,
-									'MB_STATUS'	=> $MB_STATUS, // Default 3. Draft
-									'DOC_STATUS'=> $DOC_STATUS, // DOC_STATUS = 1 OR DOC_STATUS = 2
-									'MB_FN1'	=> $file_name1,
-									'MB_FN2'	=> $file_name2,
-									'MB_FN3'	=> $file_name3,
-									'MB_FN4'	=> $file_name4,
-									'MB_FN5'	=> $file_name5,
-									'MB_ISRUNNO'=> 'Y',
-									'MB_ISGROUP'=> $MB_ISGROUP,
-									'MB_CREATER'=> $DefEmp_ID,
-									'MB_CREATED'=> $CREATED,
-									'MB_D'		=> $MB_D,
-									'MB_M'		=> $MB_M,
-									'MB_Y'		=> $MB_Y);
-					$this->m_mailbox->add($insMail);								
-				// INSERT INTO DRAFT
-			
-			if ($this->db->trans_status() === FALSE)
-			{
-				$this->db->trans_rollback();
-			}
-			else
-			{
-				$this->db->trans_commit();
-			}
-			
-			if($MB_STATUS == 1)
-			{
-				$url	= site_url('c_mailbox/c_mailbox/sent_mail/?id='.$this->url_encryption_helper->encode_url($DefEmp_ID));
-			}
-			else
-			{
-				$url	= site_url('c_mailbox/c_mailbox/draft_mail/?id='.$this->url_encryption_helper->encode_url($DefEmp_ID));
-			}
-			redirect($url);
-		}
-		else
-		{
-			redirect('Auth');
-		}
-	}
-	
 	function read_mail() // U
 	{	
 		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
@@ -1862,139 +2041,7 @@ class C_mailbox  extends CI_Controller
 			redirect('Auth');
 		}
 	}
-	
-	function draft_mail() // U - index
-	{	
-		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
-		$sqlApp 		= "SELECT * FROM tappname";
-		$resultaApp = $this->db->query($sqlApp)->result();
-		foreach($resultaApp as $therow) :
-			$appName = $therow->app_name;		
-		endforeach;
-		
-		if ($this->session->userdata('login') == TRUE)
-		{
-			$DefEmp_ID	= $_GET['id'];
-			$DefEmp_ID	= $this->url_encryption_helper->decode_url($DefEmp_ID);
-			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
-			
-			$data['title'] 			= $appName;
-			$data['h2_title']		= 'Mailbox';
-			$data['MenuApp'] 		= 'MN381';
-			
-			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
-			$data["countInbox"] 	= $tot_Inbox;
-			
-			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
-			$data["countInbox_ur"] 	= $tot_Inbox_ur;
-			
-			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
-			$data["countSent"] 		= $tot_Sent;
-			
-			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
-			$data["countDraft"] 	= $tot_Draft;
-			
-			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
-			$data["countJunk"] 		= $tot_Junk;
-			
-			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
-			$data["countTrash"] 	= $tot_Trash;
-	 
-			$data['viewmail']		= $this->m_mailbox->get_all_mail_draft($DefEmp_ID)->result();
-			
-			$this->load->view('v_mailbox/draft_maillist', $data);
-		}
-		else
-		{
-			redirect('Auth');
-		}
-	}
-	
-	function draft_mail_update() // U - index
-	{
-		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
-		$sqlApp 		= "SELECT * FROM tappname";
-		$resultaApp = $this->db->query($sqlApp)->result();
-		foreach($resultaApp as $therow) :
-			$appName = $therow->app_name;		
-		endforeach;
-		
-		if ($this->session->userdata('login') == TRUE)
-		{
-			$MB_NO		= $_GET['id'];
-			$MB_NO		= $this->url_encryption_helper->decode_url($MB_NO);
-			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
-			
-			$data['title'] 			= $appName;
-			$data['task']			= 'edit';
-			$data['h2_title']		= 'Mailbox';
-			$data['MenuApp'] 		= 'MN381';
-			$data['form_action']	= site_url('c_mailbox/c_mailbox/draft_mail_update_process');
-			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process/?id='.$this->url_encryption_helper->encode_url($MB_NO));
-			
-			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
-			$data["countInbox"] 	= $tot_Inbox;
-			
-			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
-			$data["countInbox_ur"] 	= $tot_Inbox_ur;
-			
-			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
-			$data["countSent"] 		= $tot_Sent;
-			
-			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
-			$data["countDraft"] 	= $tot_Draft;
-			
-			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
-			$data["countJunk"] 		= $tot_Junk;
-			
-			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
-			$data["countTrash"] 	= $tot_Trash;
-	 
-			$data['viewmail']		= $this->m_mailbox->get_all_mail_draft($DefEmp_ID)->result();
-			
-			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_NO)->row();
-			
-			$data['default']['MB_ID'] 		= $getMailDetail->MB_ID;
-			$data['default']['MB_NO'] 		= $getMailDetail->MB_NO;
-			$data['default']['MB_CODE'] 	= $getMailDetail->MB_CODE;
-			$data['default']['MB_CLASS'] 	= $getMailDetail->MB_CLASS;
-			$data['default']['MB_TYPE'] 	= $getMailDetail->MB_TYPE;
-			$data['default']['MB_TYPE_X'] 	= $getMailDetail->MB_TYPE_X;
-			$data['default']['MB_DEPT'] 	= $getMailDetail->MB_DEPT;
-			$data['default']['MB_CODE'] 	= $getMailDetail->MB_CODE;
-			$data['default']['MB_PARENTC'] 	= $getMailDetail->MB_PARENTC;
-			$data['default']['MB_SUBJECT'] 	= $getMailDetail->MB_SUBJECT;
-			$data['default']['MB_DATE'] 	= $getMailDetail->MB_DATE;
-			$data['default']['MB_DATE1'] 	= $getMailDetail->MB_DATE1;
-			$data['default']['MB_READD'] 	= $getMailDetail->MB_READD;
-			$data['default']['MB_FROM_ID'] 	= $getMailDetail->MB_FROM_ID;
-			$data['default']['MB_FROM']		= $getMailDetail->MB_FROM;
-			$data['default']['MB_TO_ID']	= $getMailDetail->MB_TO_ID;
-			$data['default']['MB_TO']		= $getMailDetail->MB_TO;
-			$data['default']['MB_TO_IDG']	= $getMailDetail->MB_TO_IDG;
-			$data['default']['MB_TOG']		= $getMailDetail->MB_TOG;
-			$data['default']['MB_MESSAGE'] 	= $getMailDetail->MB_MESSAGE;
-			$data['default']['MB_STATUS'] 	= $getMailDetail->MB_STATUS;	
-			$data['default']['DOC_STATUS'] 	= $getMailDetail->DOC_STATUS;	
-			$data['default']['MB_FN1']		= $getMailDetail->MB_FN1;
-			$data['default']['MB_FN2']		= $getMailDetail->MB_FN2;
-			$data['default']['MB_FN3']		= $getMailDetail->MB_FN3;
-			$data['default']['MB_FN4']		= $getMailDetail->MB_FN4;
-			$data['default']['MB_FN5']		= $getMailDetail->MB_FN5;		
-			$data['default']['MB_ISRUNNO']	= $getMailDetail->MB_ISRUNNO;
-			$data['default']['MB_D']		= $getMailDetail->MB_D;
-			$data['default']['MB_M']		= $getMailDetail->MB_M;
-			$data['default']['MB_Y']		= $getMailDetail->MB_Y;
-			$data['default']['MB_PATTNO']	= $getMailDetail->MB_PATTNO;
-			
-			$this->load->view('v_mailbox/update_maillist', $data);
-		}
-		else
-		{
-			redirect('Auth');
-		}
-	}
-	
+
 	function draft_mail_update_process() // U -- Same with new mail
 	{	
 		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
@@ -3020,53 +3067,6 @@ class C_mailbox  extends CI_Controller
 				$url	= site_url('c_mailbox/c_mailbox/draft_mail/?id='.$this->url_encryption_helper->encode_url($DefEmp_ID));
 			}
 			redirect($url);
-		}
-		else
-		{
-			redirect('Auth');
-		}
-	}
-	
-	function trash_mail() // U - index
-	{	
-		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
-		$sqlApp 		= "SELECT * FROM tappname";
-		$resultaApp = $this->db->query($sqlApp)->result();
-		foreach($resultaApp as $therow) :
-			$appName = $therow->app_name;		
-		endforeach;
-		
-		if ($this->session->userdata('login') == TRUE)
-		{
-			$DefEmp_ID	= $_GET['id'];
-			$DefEmp_ID	= $this->url_encryption_helper->decode_url($DefEmp_ID);
-			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
-			
-			$data['title'] 			= $appName;
-			$data['h2_title']		= 'Mailbox';
-			$data['MenuApp'] 		= 'MN381';
-			
-			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
-			$data["countInbox"] 	= $tot_Inbox;
-			
-			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
-			$data["countInbox_ur"] 	= $tot_Inbox_ur;
-			
-			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
-			$data["countSent"] 		= $tot_Sent;
-			
-			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
-			$data["countDraft"] 	= $tot_Draft;
-			
-			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
-			$data["countJunk"] 		= $tot_Junk;
-			
-			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
-			$data["countTrash"] 	= $tot_Trash;
-	 
-			$data['viewmail']		= $this->m_mailbox->get_all_mail_trash($DefEmp_ID)->result();
-			
-			$this->load->view('v_mailbox/trash_maillist', $data);
 		}
 		else
 		{
