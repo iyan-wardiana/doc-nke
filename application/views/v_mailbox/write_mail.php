@@ -543,8 +543,8 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                         	<span class="label label-warning pull-right"><?php echo $countSent; ?></span></a>
                         </li>
                         <li>
-                        	<a href=""><i class="fa fa-clock-o"></i> Process
-                        	<span class="label label-info pull-right">0</span></a>
+                        	<a href="<?php echo $secProc_Mail; ?>">"><i class="fa fa-clock-o"></i> Process
+                        	<span class="label label-info pull-right"><?php echo $countProc; ?></span></a>
                         </li>
                         <li>
                         	<a href="<?php echo $secDraft_Mail; ?>"><i class="fa fa-file-text-o"></i> Drafts
