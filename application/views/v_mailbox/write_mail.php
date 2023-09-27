@@ -540,7 +540,7 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 						</li>
                         <li>
                         	<a href="<?php echo $secSend_Mail; ?>"><i class="fa fa-envelope-o"></i> Sent
-                        	<span class="label label-warning pull-right"><?php echo $countSent; ?></span></a>
+                        	<span class="label label-success pull-right"><?php echo $countSent; ?></span></a>
                         </li>
                         <li>
                         	<a href="<?php echo $secProc_Mail; ?>"><i class="fa fa-clock-o"></i> Process
@@ -552,11 +552,11 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 						</li>
                         <li style="display:none">
                         	<a href="#"><i class="fa fa-filter"></i> Junk
-                            <span class="label label-warning pull-right"><?php echo $countJunk; ?></span></a>
+                            <span class="label label-danger pull-right"><?php echo $countJunk; ?></span></a>
                         </li>
                         <li>
                         	<a href="<?php echo $secTrash_Mail; ?>"><i class="fa fa-trash-o"></i> Trash
-                            <span class="label label-warning pull-right"><?php echo $countTrash; ?></span></a>
+                            <span class="label label-danger pull-right"><?php echo $countTrash; ?></span></a>
                         </li>
                     </ul>
             	</div>
