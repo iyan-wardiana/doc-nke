@@ -112,7 +112,7 @@ $Emp_DeptCode		= $this->session->userdata['Emp_DeptCode'];
                         	<span class="label label-success pull-right"><?php echo $countSent; ?></span></a>
                         </li>
                         <li>
-                        	<a href="<?php echo $secProc_Mail; ?>">"><i class="fa fa-clock-o"></i> Process
+                        	<a href="<?php echo $secProc_Mail; ?>"><i class="fa fa-clock-o"></i> Process
                         	<span class="label label-info pull-right"><?php echo $countProc; ?></span></a>
                         </li>
                         <li>
