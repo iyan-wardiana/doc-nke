@@ -126,6 +126,10 @@ function jin_pendek ($var, $len = 200, $txt_titik = "...")
                         	<a href="<?php echo $secSend_Mail; ?>"><i class="fa fa-envelope-o"></i> Sent
                         	<span class="label label-success pull-right"><?php echo $countSent; ?></span></a>
                         </li>
+                        <li>
+                        	<a href=""><i class="fa fa-clock-o"></i> Process
+                        	<span class="label label-info pull-right">0</span></a>
+                        </li>
                         <li class="active">
                         	<a href="<?php echo $secDraft_Mail; ?>"><i class="fa fa-file-text-o"></i> Drafts
                             <span class="label label-warning pull-right"><?php echo $countDraft; ?></span></a>

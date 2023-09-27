@@ -129,7 +129,7 @@ $NO_06		= date('m');
 $NO_07		= date('y');
 $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
 
-echo "MB_DEPT : $MB_DEPT";
+// echo "MB_DEPT : $MB_DEPT";
 // START: GET Emp_ID berdasarkan MB_DEPT
     $Emp_ID    = $DefEmp_ID;
     $s_EmpDEPT = "SELECT Emp_ID FROM tbl_employee WHERE Emp_ID IN (SELECT DEMP_EMPID FROM tbl_mail_dept_emp WHERE DEMP_DEPCODE = '$MB_DEPT')";
@@ -542,6 +542,10 @@ echo "MB_DEPT : $MB_DEPT";
                         	<span class="label label-warning pull-right"><?php echo $countSent; ?></span></a>
                         </li>
                         <li>
+                        	<a href=""><i class="fa fa-clock-o"></i> Process
+                        	<span class="label label-info pull-right">0</span></a>
+                        </li>
+                        <li>
                         	<a href="<?php echo $secDraft_Mail; ?>"><i class="fa fa-file-text-o"></i> Drafts
                             <span class="label label-warning pull-right"><?php echo $countDraft; ?></span></a>
 						</li>
@@ -581,11 +585,11 @@ echo "MB_DEPT : $MB_DEPT";
                 <form name="frm" method="post" action="">
                     <input type="hidden" name="MB_CLASS_A" id="MB_CLASS_A" class="textbox" value="<?php echo $MB_CLASS; ?>" />
                     <input type="hidden" name="MB_TYPE_A" id="MB_TYPE_A" class="textbox" value="<?php echo $MB_TYPE; ?>" />
-                    <input type="text" name="MB_DEPT_A" id="MB_DEPT_A" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
+                    <input type="hidden" name="MB_DEPT_A" id="MB_DEPT_A" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
                     <input type="submit" class="button_css" name="submitSrch" id="submitSrch" value=" search " style="display:none" />
                 </form>
                 <form name="frm1" method="post" action="<?php echo $form_action; ?>" enctype="multipart/form-data" onSubmit="return checkData();">
-                    <input type="text" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $Emp_ID; ?>" />
+                    <input type="hidden" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $Emp_ID; ?>" />
                     <input type="hidden" name="MB_DEPT" id="MB_DEPT" class="textbox" value="<?php echo $MDEPT_CODE1; ?>" />
                     <input type="hidden" name="MB_STATUS" id="MB_STATUS" class="textbox" value="<?php echo $MB_STATUS; ?>" />
                     <input type="hidden" name="MB_PATTNO" id="MB_PATTNO" class="textbox" value="<?php echo $resMBCN; ?>" />

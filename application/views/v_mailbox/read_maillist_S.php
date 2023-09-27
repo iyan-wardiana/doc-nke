@@ -142,6 +142,10 @@ $MAIL_NO		= $MB_CODE;
                         	<span class="label label-warning pull-right"><?php echo $countSent; ?></span></a>
                         </li>
                         <li>
+                        	<a href=""><i class="fa fa-clock-o"></i> Process
+                        	<span class="label label-info pull-right">0</span></a>
+                        </li>
+                        <li>
                         	<a href="<?php echo $secDraft_Mail; ?>"><i class="fa fa-file-text-o"></i> Drafts
                             <span class="label label-warning pull-right"><?php echo $countDraft; ?></span></a>
 						</li>
