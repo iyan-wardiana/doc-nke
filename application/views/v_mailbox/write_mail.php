@@ -649,8 +649,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 											$MDEPT_POSLEV	= $rowDept->MDEPT_POSLEV;
 											?>
 												<option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MDEPT_CODE1) { ?> selected <?php } ?>>
-													<?php //echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
-													<?php echo "$MDEPT_CODE - $MDEPT_DESC / $MDEPT_NAME"; ?>
+													<?php echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
 												</option>
 											<?php
                                             if($MDEPT_POSLEV == 'DEPT')
