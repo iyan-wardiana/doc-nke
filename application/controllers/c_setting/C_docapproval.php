@@ -660,6 +660,7 @@ class C_docapproval  extends CI_Controller
 								'DOCAPP_NAME' 	=> $MENU_NAME,
 								'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 								'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+								'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 								'POSCODE' 		=> $this->input->post('POSCODE'),
 								'APPROVER_1'	=> $this->input->post('APPROVER_1'),
 								'APPLIMIT_1'	=> $this->input->post('APPLIMIT_1'),
@@ -684,6 +685,7 @@ class C_docapproval  extends CI_Controller
 											'DOCAPP_NAME' 	=> $POSCODE,
 											'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 											'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+											'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 											'POSCODE' 		=> $this->input->post('POSCODE'),
 											'APPROVER_1'	=> $this->input->post('APPROVER_1'),
 											'APPLIMIT_1'	=> $this->input->post('APPLIMIT_1'),
@@ -701,6 +703,7 @@ class C_docapproval  extends CI_Controller
 											'DOCAPP_NAME' 	=> $MENU_NAME,
 											'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 											'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+											'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 											'POSCODE' 		=> $this->input->post('POSCODE'),
 											'APPROVER_1'	=> $this->input->post('APPROVER_2'),
 											'APPLIMIT_1'	=> $this->input->post('APPLIMIT_2'),
@@ -718,6 +721,7 @@ class C_docapproval  extends CI_Controller
 											'DOCAPP_NAME' 	=> $MENU_NAME,
 											'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 											'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+											'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 											'POSCODE' 		=> $this->input->post('POSCODE'),
 											'APPROVER_1'	=> $this->input->post('APPROVER_3'),
 											'APPLIMIT_1'	=> $this->input->post('APPLIMIT_3'),
@@ -735,6 +739,7 @@ class C_docapproval  extends CI_Controller
 											'DOCAPP_NAME' 	=> $MENU_NAME,
 											'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 											'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+											'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 											'POSCODE' 		=> $this->input->post('POSCODE'),
 											'APPROVER_1'	=> $this->input->post('APPROVER_4'),
 											'APPLIMIT_1'	=> $this->input->post('APPLIMIT_4'),
@@ -752,6 +757,7 @@ class C_docapproval  extends CI_Controller
 											'DOCAPP_NAME' 	=> $MENU_NAME,
 											'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 											'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+											'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 											'POSCODE' 		=> $this->input->post('POSCODE'),
 											'APPROVER_1'	=> $this->input->post('APPROVER_5'),
 											'APPLIMIT_1'	=> $this->input->post('APPLIMIT_5'),
@@ -823,6 +829,7 @@ class C_docapproval  extends CI_Controller
 			$data['default']['DOCAPP_TYPE'] = $getdocapproval->DOCAPP_TYPE;
 			$data['default']['DOCAPP_NAME'] = $getdocapproval->DOCAPP_NAME;
 			$data['default']['MENU_CODE'] 	= $getdocapproval->MENU_CODE;
+			$data['default']['MDEPT_CODE'] 	= $getdocapproval->MDEPT_CODE;
 			$data['default']['POSCODE'] 	= $getdocapproval->POSCODE;
 			$data['default']['APPROVER_1'] 	= $getdocapproval->APPROVER_1;
 			$data['default']['APPROVER_2'] 	= $getdocapproval->APPROVER_2;
@@ -857,6 +864,7 @@ class C_docapproval  extends CI_Controller
 			
 			$MENU_NAME		= '';
 			$MENU_CODE		= $this->input->post('MENU_CODE');
+			$MDEPT_CODE		= $this->input->post('MDEPT_CODE');
 			$POSCODE		= $this->input->post('POSCODE');
 			$sqlGetMENU		= "SELECT menu_name_$LangID AS menu_name FROM tbl_menu WHERE MENU_CODE = '$MENU_CODE'";
 			$resGetMENU		= $this->db->query($sqlGetMENU)->result();
@@ -891,6 +899,7 @@ class C_docapproval  extends CI_Controller
 									'DOCAPP_NAME' 	=> $MENU_NAME,
 									'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 									'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+									'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 									'POSCODE' 		=> $this->input->post('POSCODE'),
 									'APPROVER_1'	=> $this->input->post('APPROVER_1'),
 									'APPLIMIT_1'	=> $this->input->post('APPLIMIT_1'),
@@ -919,6 +928,7 @@ class C_docapproval  extends CI_Controller
 												'DOCAPP_NAME' 	=> $MENU_NAME,
 												'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 												'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+												'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 												'POSCODE' 		=> $this->input->post('POSCODE'),
 												'APPROVER_1'	=> $this->input->post('APPROVER_1'),
 												'APPLIMIT_1'	=> $this->input->post('APPLIMIT_1'),
@@ -936,6 +946,7 @@ class C_docapproval  extends CI_Controller
 												'DOCAPP_NAME' 	=> $MENU_NAME,
 												'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 												'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+												'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 												'POSCODE' 		=> $this->input->post('POSCODE'),
 												'APPROVER_1'	=> $this->input->post('APPROVER_2'),
 												'APPLIMIT_1'	=> $this->input->post('APPLIMIT_2'),
@@ -953,6 +964,7 @@ class C_docapproval  extends CI_Controller
 												'DOCAPP_NAME' 	=> $MENU_NAME,
 												'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 												'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+												'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 												'POSCODE' 		=> $this->input->post('POSCODE'),
 												'APPROVER_1'	=> $this->input->post('APPROVER_3'),
 												'APPLIMIT_1'	=> $this->input->post('APPLIMIT_3'),
@@ -970,6 +982,7 @@ class C_docapproval  extends CI_Controller
 												'DOCAPP_NAME' 	=> $MENU_NAME,
 												'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 												'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+												'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 												'POSCODE' 		=> $this->input->post('POSCODE'),
 												'APPROVER_1'	=> $this->input->post('APPROVER_4'),
 												'APPLIMIT_1'	=> $this->input->post('APPLIMIT_4'),
@@ -987,6 +1000,7 @@ class C_docapproval  extends CI_Controller
 												'DOCAPP_NAME' 	=> $MENU_NAME,
 												'DOCAPP_TYPE' 	=> $this->input->post('DOCAPP_TYPE'),
 												'MENU_CODE' 	=> $this->input->post('MENU_CODE'),
+												'MDEPT_CODE' 	=> $this->input->post('MDEPT_CODE'),
 												'POSCODE' 		=> $this->input->post('POSCODE'),
 												'APPROVER_1'	=> $this->input->post('APPROVER_5'),
 												'APPLIMIT_1'	=> $this->input->post('APPLIMIT_5'),
@@ -1097,7 +1111,7 @@ class C_docapproval  extends CI_Controller
 		// END DELETE STEP APP BEFORE HEADER & DETAIL
 
 		// GET docstepapp HEADER SOURCE
-			$getDocStepAPPH 	= "SELECT DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, 
+			$getDocStepAPPH 	= "SELECT DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE,
 									APPROVER_1, APPROVER_2, APPROVER_3, APPROVER_4, APPROVER_5, MAX_STEP 
 									FROM tbl_docstepapp WHERE MENU_CODE = '$MENU_CODE' AND PRJCODE = '$SRCPRJCODE'";
 			$resDocStepAPPH		= $this->db->query($getDocStepAPPH);
@@ -1110,6 +1124,7 @@ class C_docapproval  extends CI_Controller
 					$DOCAPP_TYPE	= $rAPP->DOCAPP_TYPE;
 					$DOCAPP_NAME	= $rAPP->DOCAPP_NAME;
 					$MENU_CODE		= $rAPP->MENU_CODE;
+					$MDEPT_CODE		= $rAPP->MDEPT_CODE;
 					$APPROVER_1		= $rAPP->APPROVER_1;
 					$APPROVER_2		= $rAPP->APPROVER_2;
 					$APPROVER_3		= $rAPP->APPROVER_3;
@@ -1121,9 +1136,9 @@ class C_docapproval  extends CI_Controller
 					{
 						$NEWDOCCODE		= date('YmdHis');
 						// NEW COPY STEP APP HEADER
-							$newSTEPAPPH = "INSERT INTO tbl_docstepapp (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, 
+							$newSTEPAPPH = "INSERT INTO tbl_docstepapp (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE,
 											APPROVER_1, APPROVER_2, APPROVER_3, APPROVER_4, APPROVER_5, MAX_STEP) 
-											VALUES ('$NEWDOCCODE', '$DSTPRJCODE', '$DOCAPP_TYPE', '$DOCAPP_NAME', '$MENU_CODE', 
+											VALUES ('$NEWDOCCODE', '$DSTPRJCODE', '$DOCAPP_TYPE', '$DOCAPP_NAME', '$MENU_CODE', '$MDEPT_CODE',
 											'$APPROVER_1', '$APPROVER_2', '$APPROVER_3', '$APPROVER_4', '$APPROVER_5', '$MAX_STEP')";
 							$this->db->query($newSTEPAPPH);
 						// END NEW COPY STEP APP HEADER
@@ -1134,9 +1149,9 @@ class C_docapproval  extends CI_Controller
 						date_add($date, date_interval_create_from_date_string("1 seconds")); // ADD 1 second
 						$NEWDOCCODE	= date_format($date,"YmdHis");
 						// NEW COPY STEP APP HEADER
-							$newSTEPAPPH = "INSERT INTO tbl_docstepapp (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, 
+							$newSTEPAPPH = "INSERT INTO tbl_docstepapp (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE,
 											APPROVER_1, APPROVER_2, APPROVER_3, APPROVER_4, APPROVER_5, MAX_STEP) 
-											VALUES ('$NEWDOCCODE', '$DSTPRJCODE', '$DOCAPP_TYPE', '$DOCAPP_NAME', '$MENU_CODE', 
+											VALUES ('$NEWDOCCODE', '$DSTPRJCODE', '$DOCAPP_TYPE', '$DOCAPP_NAME', '$MENU_CODE', '$MDEPT_CODE'
 											'$APPROVER_1', '$APPROVER_2', '$APPROVER_3', '$APPROVER_4', '$APPROVER_5', '$MAX_STEP')";
 							$this->db->query($newSTEPAPPH);
 						// END NEW COPY STEP APP HEADER
@@ -1147,7 +1162,7 @@ class C_docapproval  extends CI_Controller
 		// END GET docstepapp HEADER SOURCE
 
 		// GET docstepapp HEADER DEST
-			$getDocStepAPPDST 	= "SELECT DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, 
+			$getDocStepAPPDST 	= "SELECT DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE,
 									APPROVER_1, APPROVER_2, APPROVER_3, APPROVER_4, APPROVER_5, MAX_STEP 
 									FROM tbl_docstepapp WHERE MENU_CODE = '$MENU_CODE' AND PRJCODE = '$DSTPRJCODE'";
 			$resDocStepAPPDST		= $this->db->query($getDocStepAPPDST);
@@ -1159,6 +1174,7 @@ class C_docapproval  extends CI_Controller
 					$DOCAPP_TYPE	= $rAPPDST->DOCAPP_TYPE;
 					$DOCAPP_NAME	= $rAPPDST->DOCAPP_NAME;
 					$MENU_CODE		= $rAPPDST->MENU_CODE;
+					$MDEPT_CODE		= $rAPPDST->MDEPT_CODE;
 					$APPROVER_1		= $rAPPDST->APPROVER_1;
 					$APPROVER_2		= $rAPPDST->APPROVER_2;
 					$APPROVER_3		= $rAPPDST->APPROVER_3;
@@ -1168,8 +1184,8 @@ class C_docapproval  extends CI_Controller
 
 					if($APPROVER_1 != '')
 					{
-						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
-										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP
+						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
+										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP
 										FROM tbl_docstepapp_det
 										WHERE MENU_CODE = '$MENU_CODE' AND PRJCODE = '$SRCPRJCODE' AND APPROVER_1 = '$APPROVER_1'";
 						$this->db->query($newSTEPAPPD);
@@ -1177,8 +1193,8 @@ class C_docapproval  extends CI_Controller
 
 					if($APPROVER_2 != '')
 					{
-						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
-										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP
+						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
+										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP
 										FROM tbl_docstepapp_det
 										WHERE MENU_CODE = '$MENU_CODE' AND PRJCODE = '$SRCPRJCODE' AND APPROVER_1 = '$APPROVER_2'";
 						$this->db->query($newSTEPAPPD);
@@ -1186,8 +1202,8 @@ class C_docapproval  extends CI_Controller
 
 					if($APPROVER_3 != '')
 					{
-						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
-										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP
+						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
+										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP
 										FROM tbl_docstepapp_det
 										WHERE MENU_CODE = '$MENU_CODE' AND PRJCODE = '$SRCPRJCODE' AND APPROVER_1 = '$APPROVER_3'";
 						$this->db->query($newSTEPAPPD);
@@ -1195,8 +1211,8 @@ class C_docapproval  extends CI_Controller
 
 					if($APPROVER_4 != '')
 					{
-						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
-										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP
+						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
+										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP
 										FROM tbl_docstepapp_det
 										WHERE MENU_CODE = '$MENU_CODE' AND PRJCODE = '$SRCPRJCODE' AND APPROVER_1 = '$APPROVER_4'";
 						$this->db->query($newSTEPAPPD);
@@ -1204,8 +1220,8 @@ class C_docapproval  extends CI_Controller
 
 					if($APPROVER_5 != '')
 					{
-						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
-										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, APPROVER_1, APP_STEP, MAX_STEP
+						$newSTEPAPPD = "INSERT INTO tbl_docstepapp_det (DOCCODE, PRJCODE, DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP) 
+										SELECT '$DOCCODEDST', '$PRJCODEDST', DOCAPP_TYPE, DOCAPP_NAME, MENU_CODE, MDEPT_CODE, APPROVER_1, APP_STEP, MAX_STEP
 										FROM tbl_docstepapp_det
 										WHERE MENU_CODE = '$MENU_CODE' AND PRJCODE = '$SRCPRJCODE' AND APPROVER_1 = '$APPROVER_5'";
 						$this->db->query($newSTEPAPPD);

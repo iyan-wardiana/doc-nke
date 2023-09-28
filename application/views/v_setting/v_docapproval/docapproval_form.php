@@ -45,6 +45,7 @@ if($task == 'add')
 	$DOCAPP_TYPE		= 2;
 	$DOCAPP_NAME 		= "";
 	$MENU_CODE 			= "";
+	$MDEPT_CODE 		= "";
 	$APPROVER_1 		= "";
 	$APPROVER_2 		= "";
 	$APPROVER_3			= "";
@@ -72,6 +73,7 @@ else
 	$DOCAPP_TYPE 	= $default['DOCAPP_TYPE'];
 	$DOCAPP_NAME 	= $default['DOCAPP_NAME'];
 	$MENU_CODE 		= $default['MENU_CODE'];
+	$MDEPT_CODE 	= $default['MDEPT_CODE'];
 	$POSCODE 		= $default['POSCODE'];
 	$APPROVER_1 	= $default['APPROVER_1'];
 	$APPROVER_2 	= $default['APPROVER_2'];
@@ -329,6 +331,28 @@ else
 				                        <input type="hidden" maxlength="50" name="DOCCODE" id="DOCCODE" size="20" value="<?php echo  $DOCCODE;?>">
 				                        <select name="DOCAPP_TYPE" id="DOCAPP_TYPE" class="form-control select2" style="max-width:150px" >
 				                        	<option value="2" <?php if($DOCAPP_TYPE == 2) { ?> selected <?php } ?>>Tahapan</option>
+				                        </select>
+		                            </div>
+		                        </div>
+		                        <div class="form-group"> <!-- MDEPT_CODE -->
+		                            <label for="inputName" class="col-sm-2 control-label">Kode Surat Departemen</label>
+		                            <div class="col-sm-10">
+		                                <select name="MDEPT_CODE" id="MDEPT_CODE" class="form-control select2">
+				                        	<option value=""> --- </option>
+				                            <?php
+												$s_MDEPT = "SELECT MDEPT_CODE, MDEPT_POSIT FROM tbl_mail_dept WHERE MDEPT_EMPID != ''";
+												$r_MDEPT = $this->db->query($s_MDEPT);
+												if($r_MDEPT->num_rows() > 0)
+												{
+													foreach($r_MDEPT->result() as $rw_MDEPT):
+														$MDEPT_CODE1 	= $rw_MDEPT->MDEPT_CODE;
+														$MDEPT_POSIT1 	= $rw_MDEPT->MDEPT_POSIT;
+														?>
+															<option value="<?=$MDEPT_CODE1?>" <?php if($MDEPT_CODE1 == $MDEPT_CODE) echo "selected;" ?>><?php echo "$MDEPT_CODE1 - $MDEPT_POSIT1" ?></option>
+														<?php
+													endforeach;
+												}
+				                            ?>
 				                        </select>
 		                            </div>
 		                        </div>
