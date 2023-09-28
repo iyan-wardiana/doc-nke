@@ -348,7 +348,7 @@ else
 														$MDEPT_CODE1 	= $rw_MDEPT->MDEPT_CODE;
 														$MDEPT_POSIT1 	= $rw_MDEPT->MDEPT_POSIT;
 														?>
-															<option value="<?=$MDEPT_CODE1?>" <?php if($MDEPT_CODE1 == $MDEPT_CODE) echo "selected;" ?>><?php echo "$MDEPT_CODE1 - $MDEPT_POSIT1" ?></option>
+															<option value="<?=$MDEPT_CODE1?>" <?php if($MDEPT_CODE1 == $MDEPT_CODE) { ?> selected <?php } ?>><?php echo "$MDEPT_CODE1 - $MDEPT_POSIT1" ?></option>
 														<?php
 													endforeach;
 												}

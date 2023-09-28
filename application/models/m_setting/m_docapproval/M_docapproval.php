@@ -68,32 +68,38 @@ class M_docapproval extends CI_Model
 		}
 	}
 	
-	function get_AllDataGRPC($search, $MENU_CODE, $PRJCODE) // GOOD
+	function get_AllDataGRPC($search, $MENU_CODE, $PRJCODE, $MDEPT_CODE) // GOOD
 	{
 		$ADDQRY1 	= "";
 		$ADDQRY2 	= "";
+		$ADDQRY3 	= "";
 
 		if($MENU_CODE != '')
 			$ADDQRY1 	= "AND A.MENU_CODE = '$MENU_CODE'";
 		if($PRJCODE != '')
 			$ADDQRY2 	= "AND A.PRJCODE = '$PRJCODE'";
+		if($MDEPT_CODE != '')
+			$ADDQRY3 	= "AND A.MDEPT_CODE = '$MDEPT_CODE'";
 
 		$sql = "tbl_docstepapp A 
 				WHERE (PRJCODE LIKE '%$search%' ESCAPE '!' OR POSCODE LIKE '%$search%' ESCAPE '!' 
 					OR DOCAPP_NAME LIKE '%$search%' ESCAPE '!' OR APPROVER_1 LIKE '%$search%' ESCAPE '!'
-					OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2";
+					OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 $ADDQRY3";
 		return $this->db->count_all($sql);
 	}
 	
-	function get_AllDataGRPL($search, $MENU_CODE, $PRJCODE, $length, $start, $order, $dir) // GOOD
+	function get_AllDataGRPL($search, $MENU_CODE, $PRJCODE, $MDEPT_CODE, $length, $start, $order, $dir) // GOOD
 	{
 		$ADDQRY1 	= "";
 		$ADDQRY2 	= "";
+		$ADDQRY3 	= "";
 
 		if($MENU_CODE != '')
 			$ADDQRY1 	= "AND A.MENU_CODE = '$MENU_CODE'";
 		if($PRJCODE != '')
 			$ADDQRY2 	= "AND A.PRJCODE = '$PRJCODE'";
+		if($MDEPT_CODE != '')
+			$ADDQRY3 	= "AND A.MDEPT_CODE = '$MDEPT_CODE'";
 
 		if($length == -1)
 		{
@@ -103,7 +109,7 @@ class M_docapproval extends CI_Model
 						FROM tbl_docstepapp A 
 						WHERE (PRJCODE LIKE '%$search%' ESCAPE '!' OR POSCODE LIKE '%$search%' ESCAPE '!' 
 							OR DOCAPP_NAME LIKE '%$search%' ESCAPE '!' OR APPROVER_1 LIKE '%$search%' ESCAPE '!'
-							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 ORDER BY $order $dir";
+							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 $ADDQRY3 ORDER BY $order $dir";
 			}
 			else
 			{
@@ -111,7 +117,7 @@ class M_docapproval extends CI_Model
 						FROM tbl_docstepapp A 
 						WHERE (PRJCODE LIKE '%$search%' ESCAPE '!' OR POSCODE LIKE '%$search%' ESCAPE '!' 
 							OR DOCAPP_NAME LIKE '%$search%' ESCAPE '!' OR APPROVER_1 LIKE '%$search%' ESCAPE '!'
-							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2";
+							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 $ADDQRY3";
 			}
 			return $this->db->query($sql);
 		}
@@ -123,7 +129,7 @@ class M_docapproval extends CI_Model
 						FROM tbl_docstepapp A 
 						WHERE (PRJCODE LIKE '%$search%' ESCAPE '!' OR POSCODE LIKE '%$search%' ESCAPE '!' 
 							OR DOCAPP_NAME LIKE '%$search%' ESCAPE '!' OR APPROVER_1 LIKE '%$search%' ESCAPE '!'
-							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 ORDER BY $order $dir
+							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 $ADDQRY3 ORDER BY $order $dir
 							LIMIT $start, $length";
 			}
 			else
@@ -132,7 +138,7 @@ class M_docapproval extends CI_Model
 						FROM tbl_docstepapp A 
 						WHERE (PRJCODE LIKE '%$search%' ESCAPE '!' OR POSCODE LIKE '%$search%' ESCAPE '!' 
 							OR DOCAPP_NAME LIKE '%$search%' ESCAPE '!' OR APPROVER_1 LIKE '%$search%' ESCAPE '!'
-							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 LIMIT $start, $length";
+							OR APPROVER_2 LIKE '%$search%' ESCAPE '!' OR APPROVER_3 LIKE '%$search%' ESCAPE '!') $ADDQRY1 $ADDQRY2 $ADDQRY3 LIMIT $start, $length";
 			}
 			return $this->db->query($sql);
 		}

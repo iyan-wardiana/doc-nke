@@ -169,6 +169,7 @@ class C_docapproval  extends CI_Controller
                 $DOCAPP_NAME 		= $dataI['DOCAPP_NAME'];
                 $PRJCODE	 		= $dataI['PRJCODE'];
                 $MENU_CODE 			= $dataI['MENU_CODE'];
+                $MDEPT_CODE 		= $dataI['MDEPT_CODE'];
                 $POSCODE            = $dataI['POSCODE'];
                 $POSS_LEVEL         = $dataI['POSLEVEL'];
                 $POSS_NAME          = "-";
@@ -311,6 +312,15 @@ class C_docapproval  extends CI_Controller
     				}
                     $APP5_EMPNAME5		= ",&nbsp;&nbsp;STEP 5 : $First_Name5 $Last_Name5";
                 }
+
+				$s_MDEPT = "SELECT MDEPT_POSIT FROM tbl_mail_dept WHERE MDEPT_CODE = '$MDEPT_CODE'";
+				$r_MDEPT = $this->db->query($s_MDEPT);
+				if($r_MDEPT->num_rows() > 0)
+				{
+					foreach($r_MDEPT->result() as $rw_MDEPT):
+						$MDEPT_POSIT 	= $rw_MDEPT->MDEPT_POSIT;
+					endforeach;
+				}
 				
 				$secUpd		= site_url('c_setting/c_docapproval/update/?id='.$this->url_encryption_helper->encode_url($DOCAPP_ID));
 
@@ -331,7 +341,7 @@ class C_docapproval  extends CI_Controller
 										  	$DOCAPP_NAME,
 										  	$PRJCODE,
 										  	$POSS_NAME,
-										  	$POSS_LEVEL,
+										  	"$MDEPT_CODE - $MDEPT_POSIT",
 										  	"$APP1_EMPNAME1$APP2_EMPNAME2$APP3_EMPNAME3$APP4_EMPNAME4$APP5_EMPNAME5",
 										  	$secAction);
 				$noU		= $noU + 1;
@@ -345,6 +355,7 @@ class C_docapproval  extends CI_Controller
 	{
 		$MENU_CODE		= $_GET['id'];
 		$PRJCODE		= $_GET['PRJCODE'];
+		$MDEPT_CODE		= $_GET['MDEPT_CODE'];
 
 		$LangID 		= $this->session->userdata['LangID'];
 		$sqlTransl		= "SELECT MLANG_CODE, MLANG_$LangID AS LangTransl FROM tbl_translate";
@@ -389,13 +400,13 @@ class C_docapproval  extends CI_Controller
 			$length			= $_REQUEST['length'];
 			$start			= $_REQUEST['start'];
 			$search			= $_REQUEST['search']["value"];
-			$num_rows 		= $this->m_docapproval->get_AllDataGRPC($search, $MENU_CODE, $PRJCODE);
+			$num_rows 		= $this->m_docapproval->get_AllDataGRPC($search, $MENU_CODE, $PRJCODE, $MDEPT_CODE,);
 			$total			= $num_rows;
 			$output			= array();
 			$output['draw']	= $draw;
 			$output['recordsTotal'] = $output['recordsFiltered']= $total;
 			$output['data']	= array();
-			$query 			= $this->m_docapproval->get_AllDataGRPL($search, $MENU_CODE, $PRJCODE, $length, $start, $order, $dir);
+			$query 			= $this->m_docapproval->get_AllDataGRPL($search, $MENU_CODE, $PRJCODE, $MDEPT_CODE, $length, $start, $order, $dir);
 								
 			$noU			= $start + 1;
 			foreach ($query->result_array() as $dataI) 
@@ -404,6 +415,7 @@ class C_docapproval  extends CI_Controller
                 $DOCAPP_NAME 		= $dataI['DOCAPP_NAME'];
                 $PRJCODE	 		= $dataI['PRJCODE'];
                 $MENU_CODE 			= $dataI['MENU_CODE'];
+                $MDEPT_CODE 		= $dataI['MDEPT_CODE'];
                 $POSCODE            = $dataI['POSCODE'];
                 $POSS_NAME          = "-";
                 if($POSCODE != '')
@@ -545,6 +557,15 @@ class C_docapproval  extends CI_Controller
     				}
                     $APP5_EMPNAME5		= ",&nbsp;&nbsp;STEP 5 : $First_Name5 $Last_Name5";
                 }
+
+				$s_MDEPT = "SELECT MDEPT_POSIT FROM tbl_mail_dept WHERE MDEPT_CODE = '$MDEPT_CODE'";
+				$r_MDEPT = $this->db->query($s_MDEPT);
+				if($r_MDEPT->num_rows() > 0)
+				{
+					foreach($r_MDEPT->result() as $rw_MDEPT):
+						$MDEPT_POSIT 	= $rw_MDEPT->MDEPT_POSIT;
+					endforeach;
+				}
 				
 				$secUpd		= site_url('c_setting/c_docapproval/update/?id='.$this->url_encryption_helper->encode_url($DOCAPP_ID));
 
@@ -565,6 +586,7 @@ class C_docapproval  extends CI_Controller
 										  	$DOCAPP_NAME,
 										  	$PRJCODE,
 										  	$POSS_NAME,
+										  	"$MDEPT_CODE - $MDEPT_POSIT",
 										  	"$APP1_EMPNAME1$APP2_EMPNAME2$APP3_EMPNAME3$APP4_EMPNAME4$APP5_EMPNAME5",
 										  	$secAction);
 				$noU		= $noU + 1;

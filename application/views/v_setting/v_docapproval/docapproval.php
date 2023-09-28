@@ -190,6 +190,27 @@ if($decFormat == 0)
                                             </button>
                                         </div>
                                     </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <select name="MDEPT_CODE" id="MDEPT_CODE" class="form-control select2" style="width: 100%" onChange="grpData(this.value)">
+                                                <option value=""> --- </option>
+                                                <?php
+                                                    $s_MDEPT = "SELECT MDEPT_CODE, MDEPT_POSIT FROM tbl_mail_dept WHERE MDEPT_EMPID != ''";
+                                                    $r_MDEPT = $this->db->query($s_MDEPT);
+                                                    if($r_MDEPT->num_rows() > 0)
+                                                    {
+                                                        foreach($r_MDEPT->result() as $rw_MDEPT):
+                                                            $MDEPT_CODE1 	= $rw_MDEPT->MDEPT_CODE;
+                                                            $MDEPT_POSIT1 	= $rw_MDEPT->MDEPT_POSIT;
+                                                            ?>
+                                                                <option value="<?=$MDEPT_CODE1?>"><?php echo "$MDEPT_CODE1 - $MDEPT_POSIT1" ?></option>
+                                                            <?php
+                                                        endforeach;
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -201,6 +222,7 @@ if($decFormat == 0)
                 {
                     var MNCODE      = document.getElementById('MENU_CODE').value;
                     var PRJCODE     = document.getElementById('PRJCODE').value;
+                    var MDEPT_CODE  = document.getElementById('MDEPT_CODE').value;
 
                     $('#example').DataTable( {
                         "destroy": true,
@@ -209,11 +231,11 @@ if($decFormat == 0)
                         //"scrollX": false,
                         "autoWidth": true,
                         "filter": true,
-                        "ajax": "<?php echo site_url('c_setting/c_docapproval/get_AllDataGRP/?id=')?>"+MNCODE+'&PRJCODE='+PRJCODE,
+                        "ajax": "<?php echo site_url('c_setting/c_docapproval/get_AllDataGRP/?id=')?>"+MNCODE+'&PRJCODE='+PRJCODE+'&MDEPT_CODE='+MDEPT_CODE,
                         "type": "POST",
                         //"lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]],
                         "lengthMenu": [[10, 25, 50, 100, 200], [10, 25, 50, 100, 200]],
-                        "columnDefs": [ { targets: [0,2], className: 'dt-body-center' },
+                        "columnDefs": [ { targets: [0,2,6], className: 'dt-body-center' },
                                         { "width": "100px", "targets": [1] }
                                       ],
                         "order": [[ 1, "desc" ]],
@@ -235,8 +257,8 @@ if($decFormat == 0)
                                 <th width="10%" nowrap><?php echo $ApprovalName ?> </th>
                                 <th width="5%"><?php echo $Project ?></th>
                                 <th width="10%"><?php echo $Department ?></th>
-                                <th width="10%"><?php echo "Level Jabatan" ?></th>
-                                <th width="65%"><?php echo $Approver ?> </th>
+                                <th width="30%"><?php echo "Kode Surat" ?></th>
+                                <th width="40%"><?php echo $Approver ?> </th>
                                 <th width="5%">&nbsp;</th>
                             </tr>
                             </thead>
@@ -388,7 +410,7 @@ if($decFormat == 0)
         "type": "POST",
         //"lengthMenu": [[10, 25, 50, 100, 200, -1], [10, 25, 50, 100, 200, "All"]],
         "lengthMenu": [[10, 25, 50, 100, 200], [10, 25, 50, 100, 200]],
-        "columnDefs": [ { targets: [0,2,4], className: 'dt-body-center' },
+        "columnDefs": [ { targets: [0,2,6], className: 'dt-body-center' },
                         { "width": "100px", "targets": [1] }
                       ],
         "language": {
