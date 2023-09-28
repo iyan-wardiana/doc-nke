@@ -101,11 +101,15 @@ if (isset($_POST['submitSrch']))
 $NO_01		= "J";			// HOLD
 $NO_02		= $MB_DEPT;		// DEPARTMENT
 $NO_03		= $MB_CLASS;
-$NO_04		= $MAIL_STEP;
-$NO_05		= "NKE";
+// $NO_04		= $MAIL_STEP;
+$no_urut	= $MAIL_STEP;
+// $NO_05		= "NKE";
+$comp		= "NKE";
 $NO_06		= date('m');
-$NO_07		= date('y');
-$MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
+// $NO_07		= date('y');
+$Period		= date('y'); // Periode Aktif
+// $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
+$MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 
 // START: GET Emp_ID berdasarkan MB_DEPT
     $Emp_ID    = $DefEmp_ID;

@@ -88,7 +88,7 @@ if($task == 'add')
 	}
 	else
 	{
-		$MB_CLASS1	= "S";
+		$MB_CLASS1	= "LT";
 		$MB_TYPE1	= "";
 		$MB_DEPT1	= $MDEPT_CODE1;
 	}
@@ -123,11 +123,15 @@ else
 $NO_01		= "J";			// HOLD
 $NO_02		= $MB_DEPT;		// DEPARTMENT
 $NO_03		= $MB_CLASS;
-$NO_04		= $MAIL_STEP;
-$NO_05		= "NKE";
+// $NO_04		= $MAIL_STEP;
+$no_urut	= $MAIL_STEP;
+// $NO_05		= "NKE";
+$comp		= "NKE";
 $NO_06		= date('m');
-$NO_07		= date('y');
-$MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
+// $NO_07		= date('y');
+$Period		= date('y'); // Periode Aktif
+// $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
+$MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 
 // echo "MB_DEPT : $MB_DEPT";
 // START: GET Emp_ID berdasarkan MB_DEPT
@@ -599,8 +603,8 @@ $MAIL_NO	= "$NO_02-$NO_03$NO_04/$NO_05/$NO_06-$NO_07";
                     <div class="box-body">
                         <div class="form-group">
                             <select name="MB_CLASS" id="MB_CLASS" class="form-control select2" onChange="ShowDocSelect(1);">
-                                <option value="M" <?php if($MB_CLASS == 'M') { ?> selected <?php } ?>> Memo </option>
-                                <option value="S" <?php if($MB_CLASS == 'S') { ?> selected <?php } ?>> Surat </option>
+                                <option value="MO" <?php if($MB_CLASS == 'MO') { ?> selected <?php } ?>> Memo </option>
+                                <option value="LT" <?php if($MB_CLASS == 'LT') { ?> selected <?php } ?>> Surat </option>
                             </select>
                         </div>
                         <div class="form-group">
