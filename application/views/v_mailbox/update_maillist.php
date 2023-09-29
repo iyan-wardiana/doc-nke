@@ -456,7 +456,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
             else
             {
                 $canApprove	= 0;
-                $descApp	= "Awaiting";
+                $descApp	= "Pending";
                 $statcoloer	= "warning";
             }
                         

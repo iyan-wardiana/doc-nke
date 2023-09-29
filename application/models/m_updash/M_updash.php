@@ -1074,7 +1074,7 @@ class M_updash extends CI_Model
 		}
 		elseif($DOC_STAT == 7)
 		{
-			$STATDESC 	= 'Awaiting';
+			$STATDESC 	= 'Pending';
 			$STATCOL	= 'warning';
 		}
 		elseif($DOC_STAT == 9)
