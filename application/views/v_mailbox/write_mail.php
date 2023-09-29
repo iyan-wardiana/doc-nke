@@ -342,7 +342,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
         if($resCAPP > 0)
         {
             $sqlAPP	= "SELECT * FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
-                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1";
+                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
             $resAPP	= $this->db->query($sqlAPP)->result();
             foreach($resAPP as $rowAPP) :
                 $MAX_STEP		= $rowAPP->MAX_STEP;
@@ -437,7 +437,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
         
             // CHECK AUTH APPROVE TYPE
             $sqlAPPT	= "SELECT DOCAPP_TYPE FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
-                            AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND POSLEVEL = '$POSS_LEVEL'";
+                            AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
             $resAPPT	= $this->db->query($sqlAPP)->result();
             foreach($resAPPT as $rowAPPT) :
                 $DOCAPP_TYPE	= $rowAPPT->DOCAPP_TYPE;
@@ -445,7 +445,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
         }
         
         $sqlSTEPAPP	= "tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND APPROVER_1 = '$DefEmp_ID'
-                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND POSLEVEL = '$POSS_LEVEL'";
+                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
         $resSTEPAPP	= $this->db->count_all($sqlSTEPAPP);
         
         if($resSTEPAPP > 0)
@@ -454,7 +454,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
             $APPLIMIT_1	= 0;
             
             $sqlAPP	= "SELECT APPLIMIT_1, APP_STEP, MAX_STEP FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp'
-                        AND APPROVER_1 = '$DefEmp_ID' AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND POSLEVEL = '$POSS_LEVEL'";
+                        AND APPROVER_1 = '$DefEmp_ID' AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
             $resAPP	= $this->db->query($sqlAPP)->result();
             foreach($resAPP as $rowAPP) :
                 $APPLIMIT_1	= $rowAPP->APPLIMIT_1;
@@ -623,7 +623,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                             </select>
                         </div>
                         <div class="form-group">
-                            <select name="MB_TYPE" id="MB_TYPE" class="form-control select2" placeholder="&nbsp;&nbsp;&nbsp;Mail Type" style="width: 100%;" onChange="ShowDocSelect_xx(this.value);">
+                            <select name="MB_TYPE" id="MB_TYPE" class="form-control select2" placeholder="&nbsp;&nbsp;&nbsp;Mail Type" style="width: 100%;" onChange="ShowDocSelect(1);">
                             	 <option value="">--- Mail Title --- </option>
                                 <?php
                                     $sqlMTyp	= "SELECT MT_CODE, MT_DESC FROM tbl_mail_type ORDER BY MT_ID";
@@ -645,7 +645,6 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                         </div>
                         <div class="form-group">
                             <select name="MB_DEPT1" id="MB_DEPT1" class="form-control select2" onChange="ShowDocSelect(1);">
-                                <option value="">-- Controlled Copy No. --</option>
                                 <?php
                                     $sqlDept	= "SELECT B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
                                                     FROM tbl_mail_dept B
@@ -688,7 +687,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                                 ?>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <select name="MB_TOG[]" id="MB_TOG" class="form-control select2" multiple="multiple" data-placeholder="&nbsp;&nbsp;&nbsp;Mail To Group" style="width: 100%;">
                                 <?php
                                     $sqlMG	= "SELECT MG_CODE, MG_NAME
