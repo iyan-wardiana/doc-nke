@@ -214,6 +214,56 @@ class C_mailbox  extends CI_Controller
 		}
 	}
 
+	function proc_mail() // U - index
+	{	
+		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
+		$sqlApp 		= "SELECT * FROM tappname";
+		$resultaApp = $this->db->query($sqlApp)->result();
+		foreach($resultaApp as $therow) :
+			$appName = $therow->app_name;		
+		endforeach;
+		
+		if ($this->session->userdata('login') == TRUE)
+		{
+			$DefEmp_ID	= $_GET['id'];
+			$DefEmp_ID	= $this->url_encryption_helper->decode_url($DefEmp_ID);
+			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
+			
+			$data['title'] 			= $appName;
+			$data['h2_title']		= 'Mailbox';
+			$data['MenuApp'] 		= 'MN381';
+			
+			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
+			$data["countInbox"] 	= $tot_Inbox;
+			
+			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
+			$data["countInbox_ur"] 	= $tot_Inbox_ur;
+			
+			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
+			$data["countSent"] 		= $tot_Sent;
+
+			$tot_Proc 				= $this->m_mailbox->count_all_proc($DefEmp_ID);
+			$data["countProc"] 		= $tot_Proc;
+			
+			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
+			$data["countDraft"] 	= $tot_Draft;
+			
+			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
+			$data["countJunk"] 		= $tot_Junk;
+			
+			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
+			$data["countTrash"] 	= $tot_Trash;
+	 
+			$data['viewmail']		= $this->m_mailbox->get_all_mail_proc($DefEmp_ID)->result();
+			
+			$this->load->view('v_mailbox/proc_maillist', $data);
+		}
+		else
+		{
+			redirect('Auth');
+		}
+	}
+
 	function draft_mail() // U - index
 	{	
 		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
@@ -307,6 +357,94 @@ class C_mailbox  extends CI_Controller
 			$data['viewmail']		= $this->m_mailbox->get_all_mail_trash($DefEmp_ID)->result();
 			
 			$this->load->view('v_mailbox/trash_maillist', $data);
+		}
+		else
+		{
+			redirect('Auth');
+		}
+	}
+	
+	function proc_mail_update() // U - index
+	{
+		$this->load->model('m_mailbox/m_mailbox', '', TRUE);
+		$sqlApp 		= "SELECT * FROM tappname";
+		$resultaApp = $this->db->query($sqlApp)->result();
+		foreach($resultaApp as $therow) :
+			$appName = $therow->app_name;		
+		endforeach;
+		
+		if ($this->session->userdata('login') == TRUE)
+		{
+			$MB_NO		= $_GET['id'];
+			$MB_NO		= $this->url_encryption_helper->decode_url($MB_NO);
+			$DefEmp_ID 	= $this->session->userdata['Emp_ID'];
+			
+			$data['title'] 			= $appName;
+			$data['task']			= 'edit';
+			$data['h2_title']		= 'Mailbox';
+			$data['MenuApp'] 		= 'MN381';
+			$data['form_action']	= site_url('c_mailbox/c_mailbox/proc_mail_update_process');
+			$data['action_trash']	= site_url('c_mailbox/c_mailbox/trash_mail_process/?id='.$this->url_encryption_helper->encode_url($MB_NO));
+			
+			$tot_Inbox 				= $this->m_mailbox->count_all_inbox($DefEmp_ID);
+			$data["countInbox"] 	= $tot_Inbox;
+			
+			$tot_Inbox_ur			= $this->m_mailbox->count_all_inbox_ur($DefEmp_ID);	// Un Read
+			$data["countInbox_ur"] 	= $tot_Inbox_ur;
+			
+			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
+			$data["countSent"] 		= $tot_Sent;
+
+			$tot_Proc 				= $this->m_mailbox->count_all_proc($DefEmp_ID);
+			$data["countProc"] 		= $tot_Proc;
+			
+			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
+			$data["countDraft"] 	= $tot_Draft;
+			
+			$tot_Junk 				= $this->m_mailbox->count_all_Junk($DefEmp_ID);
+			$data["countJunk"] 		= $tot_Junk;
+			
+			$tot_Trash 				= $this->m_mailbox->count_all_trash($DefEmp_ID);
+			$data["countTrash"] 	= $tot_Trash;
+	 
+			$data['viewmail']		= $this->m_mailbox->get_all_mail_proc($DefEmp_ID)->result();
+			
+			$getMailDetail			= $this->m_mailbox->get_MailDetl($MB_NO)->row();
+			
+			$data['default']['MB_ID'] 		= $getMailDetail->MB_ID;
+			$data['default']['MB_NO'] 		= $getMailDetail->MB_NO;
+			$data['default']['MB_CODE'] 	= $getMailDetail->MB_CODE;
+			$data['default']['MB_CLASS'] 	= $getMailDetail->MB_CLASS;
+			$data['default']['MB_TYPE'] 	= $getMailDetail->MB_TYPE;
+			$data['default']['MB_TYPE_X'] 	= $getMailDetail->MB_TYPE_X;
+			$data['default']['MB_DEPT'] 	= $getMailDetail->MB_DEPT;
+			$data['default']['MB_CODE'] 	= $getMailDetail->MB_CODE;
+			$data['default']['MB_PARENTC'] 	= $getMailDetail->MB_PARENTC;
+			$data['default']['MB_SUBJECT'] 	= $getMailDetail->MB_SUBJECT;
+			$data['default']['MB_DATE'] 	= $getMailDetail->MB_DATE;
+			$data['default']['MB_DATE1'] 	= $getMailDetail->MB_DATE1;
+			$data['default']['MB_READD'] 	= $getMailDetail->MB_READD;
+			$data['default']['MB_FROM_ID'] 	= $getMailDetail->MB_FROM_ID;
+			$data['default']['MB_FROM']		= $getMailDetail->MB_FROM;
+			$data['default']['MB_TO_ID']	= $getMailDetail->MB_TO_ID;
+			$data['default']['MB_TO']		= $getMailDetail->MB_TO;
+			$data['default']['MB_TO_IDG']	= $getMailDetail->MB_TO_IDG;
+			$data['default']['MB_TOG']		= $getMailDetail->MB_TOG;
+			$data['default']['MB_MESSAGE'] 	= $getMailDetail->MB_MESSAGE;
+			$data['default']['MB_STATUS'] 	= $getMailDetail->MB_STATUS;	
+			$data['default']['DOC_STATUS'] 	= $getMailDetail->DOC_STATUS;	
+			$data['default']['MB_FN1']		= $getMailDetail->MB_FN1;
+			$data['default']['MB_FN2']		= $getMailDetail->MB_FN2;
+			$data['default']['MB_FN3']		= $getMailDetail->MB_FN3;
+			$data['default']['MB_FN4']		= $getMailDetail->MB_FN4;
+			$data['default']['MB_FN5']		= $getMailDetail->MB_FN5;		
+			$data['default']['MB_ISRUNNO']	= $getMailDetail->MB_ISRUNNO;
+			$data['default']['MB_D']		= $getMailDetail->MB_D;
+			$data['default']['MB_M']		= $getMailDetail->MB_M;
+			$data['default']['MB_Y']		= $getMailDetail->MB_Y;
+			$data['default']['MB_PATTNO']	= $getMailDetail->MB_PATTNO;
+			
+			$this->load->view('v_mailbox/update_maillist_proc', $data);
 		}
 		else
 		{

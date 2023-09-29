@@ -341,7 +341,9 @@ class M_mailbox extends CI_Model
 	// START: PROCESS
 		function count_all_proc($DefEmp_ID) // U - Process
 		{
-			$sql		= "tbl_mailbox  WHERE (MB_FROM_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID') AND MB_STATUS = 3 AND DOC_STATUS IN (2,7)"; 	// menghitung semua email Process
+			$sql		= "tbl_mailbox WHERE (MB_FROM_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID' 
+							OR MB_DEPT IN (SELECT MDEPT_CODE FROM tbl_docstepapp WHERE MENU_CODE = 'MN381' AND APPROVER_1 = '$DefEmp_ID'))
+							AND MB_STATUS = 3 AND DOC_STATUS IN (2,7)"; 	// menghitung semua email Process
 			return $this->db->count_all($sql);
 		}
 
@@ -350,7 +352,8 @@ class M_mailbox extends CI_Model
 			$sql 		= "SELECT MB_ID, MB_NO, MB_CODE, MB_PARENTC, MB_SUBJECT, MB_DATE, MB_DATE1, MB_READD, MB_FROM_ID,
 								MB_FROM, MB_TO_ID, MB_TO, MB_MESSAGE, MB_STATUS, MB_FN1
 							FROM tbl_mailbox A
-							WHERE (MB_FROM_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID')
+							WHERE (MB_FROM_ID = '$DefEmp_ID' OR MB_CREATER = '$DefEmp_ID'
+							OR MB_DEPT IN (SELECT MDEPT_CODE FROM tbl_docstepapp WHERE MENU_CODE = 'MN381' AND APPROVER_1 = '$DefEmp_ID'))
 							AND MB_STATUS = 3 AND DOC_STATUS IN (2,7)
 							ORDER BY MB_DATE1 DESC";
 			return $this->db->query($sql);
