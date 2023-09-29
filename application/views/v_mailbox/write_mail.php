@@ -646,24 +646,35 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                         <div class="form-group">
                             <select name="MB_DEPT1" id="MB_DEPT1" class="form-control select2" onChange="ShowDocSelect(1);">
                                 <?php
-                                    $sqlDept	= "SELECT B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
-                                                    FROM tbl_mail_dept B
-                                                    WHERE B.MDEPT_EMPID IN (SELECT Emp_ID FROM tbl_employee WHERE Pos_Code = '$POSS_PARENT')
-                                                    OR B.MDEPT_EMPID = '$DefEmp_ID'
-                                                     ORDER BY B.MDEPT_CODE";
-                                    $sqlDept	= $this->db->query($sqlDept)->result();
-                                    foreach($sqlDept as $rowDept) :
-                                        $MDEPT_CODE		= $rowDept->MDEPT_CODE;
-                                        $MDEPT_DESC		= $rowDept->MDEPT_DESC;
-                                        $MDEPT_POSIT	= $rowDept->MDEPT_POSIT;
-                                        $MDEPT_NAME		= $rowDept->MDEPT_NAME;
-                                        $MDEPT_POSLEV	= $rowDept->MDEPT_POSLEV;
+                                    if($MDEPT_CODE1 != 'JXXX')
+                                    {
+                                        $sqlDept	= "SELECT B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
+                                                        FROM tbl_mail_dept B
+                                                        WHERE B.MDEPT_EMPID IN (SELECT Emp_ID FROM tbl_employee WHERE Pos_Code = '$POSS_PARENT')
+                                                        OR B.MDEPT_EMPID = '$DefEmp_ID'
+                                                         ORDER BY B.MDEPT_CODE";
+                                        $sqlDept	= $this->db->query($sqlDept)->result();
+                                        foreach($sqlDept as $rowDept) :
+                                            $MDEPT_CODE		= $rowDept->MDEPT_CODE;
+                                            $MDEPT_DESC		= $rowDept->MDEPT_DESC;
+                                            $MDEPT_POSIT	= $rowDept->MDEPT_POSIT;
+                                            $MDEPT_NAME		= $rowDept->MDEPT_NAME;
+                                            $MDEPT_POSLEV	= $rowDept->MDEPT_POSLEV;
+                                            ?>
+                                                <option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MDEPT_CODE1) { ?> selected <?php } ?>>
+                                                    <?php echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
+                                                </option>
+                                            <?php
+                                        endforeach;
+                                    }
+                                    else
+                                    {
                                         ?>
-                                            <option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MDEPT_CODE1) { ?> selected <?php } ?>>
-                                                <?php echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
+                                            <option value="JXXX" selected>
+                                                NON-MANAGEMENT
                                             </option>
                                         <?php
-                                    endforeach;
+                                    }
                                 ?>
                             </select>                           
                         </div>
@@ -904,7 +915,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                             $sqlCAPPH	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM'";
                             $resCAPPH	= $this->db->count_all($sqlCAPPH);
 							$sqlAPP		= "SELECT * FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
-											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE'";
+											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
 							$resAPP		= $this->db->query($sqlAPP)->result();
 							foreach($resAPP as $rowAPP) :
 								$MAX_STEP		= $rowAPP->MAX_STEP;
@@ -953,7 +964,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 								              	<table id="tbl" class="table table-striped" width="100%" border="0">
 													<?php
 														$s_STEP		= "SELECT DISTINCT APP_STEP, MDEPT_CODE FROM tbl_docstepapp_det
-																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE' ORDER BY APP_STEP";
+																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE1' ORDER BY APP_STEP";
 														$r_STEP		= $this->db->query($s_STEP)->result();
 														foreach($r_STEP as $rw_STEP) :
 															$STEP	    = $rw_STEP->APP_STEP;
