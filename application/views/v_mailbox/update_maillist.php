@@ -922,14 +922,15 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                     </div>
                     <div class="col-md-12">
 						<?php
-                            $DOC_NUM	= "";
+                            $DOC_NUM	= $MB_NO;
                             $sqlCAPPH	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM'";
                             $resCAPPH	= $this->db->count_all($sqlCAPPH);
 							$sqlAPP		= "SELECT * FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
-											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV')";
+											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE'";
 							$resAPP		= $this->db->query($sqlAPP)->result();
 							foreach($resAPP as $rowAPP) :
 								$MAX_STEP		= $rowAPP->MAX_STEP;
+								$MDEPT_CODE		= $rowAPP->MDEPT_CODE;
 								$APPROVER_1		= $rowAPP->APPROVER_1;
 								$APPROVER_2		= $rowAPP->APPROVER_2;
 								$APPROVER_3		= $rowAPP->APPROVER_3;
@@ -973,11 +974,12 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 			                        		<div class="search-table-outter">
 								              	<table id="tbl" class="table table-striped" width="100%" border="0">
 													<?php
-														$s_STEP		= "SELECT DISTINCT APP_STEP FROM tbl_docstepapp_det
-																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' ORDER BY APP_STEP";
+														$s_STEP		= "SELECT DISTINCT APP_STEP, MDEPT_CODE FROM tbl_docstepapp_det
+																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE' ORDER BY APP_STEP";
 														$r_STEP		= $this->db->query($s_STEP)->result();
 														foreach($r_STEP as $rw_STEP) :
-															$STEP	= $rw_STEP->APP_STEP;
+															$STEP	    = $rw_STEP->APP_STEP;
+															$MDEPT_CODE	= $rw_STEP->MDEPT_CODE;
 															$HIDE 	= 0;
 															?>
 												                <tr>
@@ -1014,13 +1016,14 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 																		}
 																		else
 																		{
-																			$s_00	= "SELECT DISTINCT A.APPROVER_1,
+																			$s_00	= "SELECT DISTINCT A.APPROVER_1, A.MDEPT_CODE,
 																							CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS complName
 																						FROM tbl_docstepapp_det A INNER JOIN tbl_employee B ON A.APPROVER_1 = B.Emp_ID
-																						WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND APP_STEP = $STEP";
+																						WHERE A.MENU_CODE = '$MenuApp' AND A.PRJCODE = '$PRJCODE' AND A.MDEPT_CODE = '$MDEPT_CODE' AND A.APP_STEP = $STEP";
 																			$r_00	= $this->db->query($s_00)->result();
 																			foreach($r_00 as $rw_00) :
 																				$APP_EMP_1	= $rw_00->APPROVER_1;
+																				$MDEPT_CODE	= $rw_00->MDEPT_CODE;
 																				$APP_NME_1	= $rw_00->complName;
 																				$OTHAPP 	= 0;
 																				$s_APPH_1	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER = '$APP_EMP_1'";
@@ -1054,7 +1057,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 											                                    	$APPCOL 	= "danger";
 											                                    	$APPIC 		= "close";
 											                                    	$APPDT 		= "-";
-											                                    	$s_APPH_O	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE')";
+											                                    	$s_APPH_O	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE')";
 												                                    $r_APPH_O	= $this->db->count_all($s_APPH_O);
 												                                    if($r_APPH_O > 0)
 												                                    	$OTHAPP = 1;
@@ -1081,7 +1084,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 											                                    	$s_01	= "SELECT A.AH_APPROVED, A.AH_APPLEV,
 											                                    					CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS COMPLNAME
 											                                    				FROM tbl_approve_hist A INNER JOIN tbl_employee B ON A.AH_APPROVER = B.Emp_ID
-											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE')";
+											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE')";
 											                                        $r_01	= $this->db->query($s_01)->result();
 											                                        foreach($r_01 as $rw_01):
 											                                            $APPDT_LEV	= $rw_01->AH_APPLEV;

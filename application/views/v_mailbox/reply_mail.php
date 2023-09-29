@@ -339,6 +339,210 @@ $MAIL_NO		= $MB_CODE;
                          <i class="fa fa-envelope-o"></i> Send
                         </button>
                     </div>
+                    <div class="col-md-12">
+						<?php
+                            $DOC_NUM	= $MB_NO;
+                            $sqlCAPPH	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM'";
+                            $resCAPPH	= $this->db->count_all($sqlCAPPH);
+							$sqlAPP		= "SELECT * FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
+											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE'";
+							$resAPP		= $this->db->query($sqlAPP)->result();
+							foreach($resAPP as $rowAPP) :
+								$MAX_STEP		= $rowAPP->MAX_STEP;
+								$MDEPT_CODE		= $rowAPP->MDEPT_CODE;
+								$APPROVER_1		= $rowAPP->APPROVER_1;
+								$APPROVER_2		= $rowAPP->APPROVER_2;
+								$APPROVER_3		= $rowAPP->APPROVER_3;
+								$APPROVER_4		= $rowAPP->APPROVER_4;
+								$APPROVER_5		= $rowAPP->APPROVER_5;
+							endforeach;
+							
+                        	if($resCAPP == 0)
+                        	{
+                        		if($LangID == 'IND')
+								{
+									$zerSetApp	= "Belum ada pengaturan untuk persetujuan dokumen ini.";
+								}
+								else
+								{
+									$zerSetApp	= "There are no arrangements for the approval of this document.";
+								}
+                        		?>
+                        			<div class="alert alert-warning alert-dismissible">
+					                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					                <?php echo $zerSetApp; ?>
+					              	</div>
+                        		<?php
+                        	}
+                        ?>
+		                <div class="row">
+		                    <div class="col-md-12">
+		                        <div class="box box-danger collapsed-box">
+		                            <div class="box-header with-border">
+		                                <h3 class="box-title"><?php echo $Approval; ?></h3>
+		                                <div class="box-tools pull-right">
+		                                    <span class="label label-danger"><?php echo "$Approved : $resCAPPH "; ?></span>
+		                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+		                                    </button>
+		                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+		                                    </button>
+		                                </div>
+		                            </div>
+		                            <div class="box-body">
+							            <div class="box-body no-padding">
+			                        		<div class="search-table-outter">
+								              	<table id="tbl" class="table table-striped" width="100%" border="0">
+													<?php
+														$s_STEP		= "SELECT DISTINCT APP_STEP, MDEPT_CODE FROM tbl_docstepapp_det
+																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE' ORDER BY APP_STEP";
+														$r_STEP		= $this->db->query($s_STEP)->result();
+														foreach($r_STEP as $rw_STEP) :
+															$STEP	    = $rw_STEP->APP_STEP;
+															$MDEPT_CODE	= $rw_STEP->MDEPT_CODE;
+															$HIDE 	= 0;
+															?>
+												                <tr>
+												                  	<td style="width: 10%" nowrap>Tahap <?=$STEP?></td>
+																	<?php
+																		$s_APPH_1	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP'";
+									                                    $r_APPH_1	= $this->db->count_all($s_APPH_1);
+									                                    if($r_APPH_1 > 0)
+									                                    {
+																			$s_00	= "SELECT DISTINCT A.AH_APPROVER, A.AH_APPROVED,
+																							CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS complName
+																						FROM tbl_approve_hist A INNER JOIN tbl_employee B ON A.AH_APPROVER = B.Emp_ID
+																						WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = $STEP";
+																			$r_00	= $this->db->query($s_00)->result();
+																			foreach($r_00 as $rw_00) :
+																				$APP_EMP_1	= $rw_00->AH_APPROVER;
+																				$APP_NME_1	= $rw_00->complName;
+																				$APP_DAT_1	= $rw_00->AH_APPROVED;
+
+										                                    	$APPCOL 	= "success";
+										                                    	$APPIC 		= "check";
+																				?>
+																					<td style="width: 2%;">
+																						<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																							<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																						</div>
+																					</td>
+																					<td>
+																						<?=$APP_NME_1?><br>
+																						<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APP_DAT_1?></span>
+																					</td>
+																				<?php
+																			endforeach;
+																		}
+																		else
+																		{
+																			$s_00	= "SELECT DISTINCT A.APPROVER_1, A.MDEPT_CODE,
+																							CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS complName
+																						FROM tbl_docstepapp_det A INNER JOIN tbl_employee B ON A.APPROVER_1 = B.Emp_ID
+																						WHERE A.MENU_CODE = '$MenuApp' AND A.PRJCODE = '$PRJCODE' AND A.MDEPT_CODE = '$MDEPT_CODE' AND A.APP_STEP = $STEP";
+																			$r_00	= $this->db->query($s_00)->result();
+																			foreach($r_00 as $rw_00) :
+																				$APP_EMP_1	= $rw_00->APPROVER_1;
+																				$MDEPT_CODE	= $rw_00->MDEPT_CODE;
+																				$APP_NME_1	= $rw_00->complName;
+																				$OTHAPP 	= 0;
+																				$s_APPH_1	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER = '$APP_EMP_1'";
+											                                    $r_APPH_1	= $this->db->count_all($s_APPH_1);
+											                                    if($r_APPH_1 > 0)
+											                                    {
+											                                    	$HIDE 	= 1;
+											                                    	$s_01	= "SELECT AH_APPROVED FROM tbl_approve_hist
+											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER = '$APP_EMP_1'";
+											                                        $r_01	= $this->db->query($s_01)->result();
+											                                        foreach($r_01 as $rw_01):
+											                                            $APPDT	= $rw_01->AH_APPROVED;
+											                                        endforeach;
+
+											                                    	$APPCOL 	= "success";
+											                                    	$APPIC 		= "check";
+																					?>
+																						<td style="width: 2%;">
+																							<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																								<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																							</div>
+																						</td>
+																						<td>
+																							<?=$APP_NME_1?><br>
+																							<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APPDT?></span>
+																						</td>
+																					<?php
+											                                    }
+											                                    else
+											                                    {
+											                                    	$APPCOL 	= "danger";
+											                                    	$APPIC 		= "close";
+											                                    	$APPDT 		= "-";
+											                                    	$s_APPH_O	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE')";
+												                                    $r_APPH_O	= $this->db->count_all($s_APPH_O);
+												                                    if($r_APPH_O > 0)
+												                                    	$OTHAPP = 1;
+											                                    }
+											                                    if($HIDE == 0)
+											                                    {
+																					?>
+																						<td style="width: 2%;">
+																							<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																								<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																							</div>
+																						</td>
+																						<td>
+																							<?=$APP_NME_1?><br>
+																							<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APPDT?></span>
+																						</td>
+																					<?php
+																				}
+
+																				if($OTHAPP > 0)
+																				{
+																					$APPDT_OTH 	= "-";
+																					$APPNM_OTH 	= "-";
+											                                    	$s_01	= "SELECT A.AH_APPROVED, A.AH_APPLEV,
+											                                    					CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS COMPLNAME
+											                                    				FROM tbl_approve_hist A INNER JOIN tbl_employee B ON A.AH_APPROVER = B.Emp_ID
+											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE')";
+											                                        $r_01	= $this->db->query($s_01)->result();
+											                                        foreach($r_01 as $rw_01):
+											                                            $APPDT_LEV	= $rw_01->AH_APPLEV;
+											                                            $APPDT_OTH	= $rw_01->AH_APPROVED;
+											                                            $APPNM_OTH	= $rw_01->COMPLNAME;
+
+												                                    	$APPCOL 	= "success";
+												                                    	$APPIC 		= "check";
+																						?>
+																			                <tr>
+																			                  	<td style="width: 10%" nowrap>&nbsp;</td>
+																								<td style="width: 2%;">
+																									<div style='white-space:nowrap; font-size: 14px; text-align: center;'>
+																										<a class="btn btn-social-icon btn-<?=$APPCOL?>"><i class="fa fa-<?=$APPIC?>"></i></a>
+																									</div>
+																								</td>
+																								<td>
+																									<?=$APPNM_OTH?><br>
+																									<i class='fa fa-calendar margin-r-5'></i><span style="font-style: italic;"><?=$APPDT_OTH?></span>
+																								</td>
+																							</tr>
+																						<?php
+											                                        endforeach;
+											                                    }
+																			endforeach;
+																		}
+																	?>
+																</tr>
+															<?php
+														endforeach;
+													?>
+								              	</table>
+							              	</div>
+							            </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+			        </div>
                 </form>
             </div>
         </div>
