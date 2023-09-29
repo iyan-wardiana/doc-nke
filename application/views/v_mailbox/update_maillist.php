@@ -24,26 +24,41 @@ foreach($resGlobal as $row) :
 	$APPLEV = $row->APPLEV;
 endforeach;
 
-$MDEPT_CODE1	= 'JXXX';
-$sqlMDC	= "SELECT MDEPT_CODE, Pos_Code FROM tbl_employee WHERE Emp_ID = '$DefEmp_ID'";
+$sqlMDC	= "SELECT Pos_Code FROM tbl_employee WHERE Emp_ID = '$DefEmp_ID'";
 $sqlMDC	= $this->db->query($sqlMDC)->result();
 foreach($sqlMDC as $rowMDC) :
-	$MDEPT_CODE1= $rowMDC->MDEPT_CODE;
 	$POSS_CODE  = $rowMDC->Pos_Code;
 endforeach;
-if($MDEPT_CODE1 == '')
-	$MDEPT_CODE1 = 'JXXX';
+
+$POSS_PARENT    = "";
+$s_POSPAR       = "SELECT POSS_PARENT FROM tbl_position_str WHERE POSS_CODE = '$POSS_CODE'";
+$r_POSPAR       = $this->db->query($s_POSPAR)->result();
+foreach($r_POSPAR as $rw_POSPAR):
+    $POSS_PARENT = $rw_POSPAR->POSS_PARENT;
+endforeach;
 
 $MDEPT_CODE1	= 'JXXX';
-$sqlMDC	= "SELECT A.DEMP_EMPID, A.DEMP_DEPCODE
-            FROM tbl_mail_dept_emp A
-            WHERE DEMP_EMPID = '$DefEmp_ID'";
-$sqlMDC	= $this->db->query($sqlMDC)->result();
-foreach($sqlMDC as $rowMDC) :
-    $MDEPT_CODE1= $rowMDC->DEMP_DEPCODE;
-endforeach;
-if($MDEPT_CODE1 == '')
-    $MDEPT_CODE1 = 'JXXX';
+$MB_TYPE1       = 'GE';
+$sqlMDC	= "SELECT A.MDEPT_EMPID, A.MDEPT_CODE
+			FROM tbl_mail_dept A
+			WHERE MDEPT_EMPID = '$DefEmp_ID'";
+$sqlMDC	= $this->db->query($sqlMDC);
+if($sqlMDC->num_rows() > 0)
+{
+    foreach($sqlMDC->result() as $rowMDC) :
+        $MDEPT_CODE1= $rowMDC->MDEPT_CODE;
+    endforeach;
+}
+else
+{
+    $sqlMDC	= "SELECT A.MDEPT_EMPID, A.MDEPT_CODE
+                FROM tbl_mail_dept A
+                WHERE MDEPT_EMPID IN (SELECT Emp_ID FROM tbl_employee WHERE Pos_Code = '$POSS_PARENT')";
+    $sqlMDC	= $this->db->query($sqlMDC);
+    foreach($sqlMDC->result() as $rowMDC) :
+        $MDEPT_CODE1= $rowMDC->MDEPT_CODE;
+    endforeach;
+}
 
 $MB_M		= date('m');
 $MB_M1		= (int)$MB_M;
@@ -254,7 +269,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
     // START : APPROVE PROCEDURE
         $POSS_LEVEL = "";
 
-		if($APPLEV == 'HO')
+        if($APPLEV == 'HO')
             $PRJCODE_LEV	= $this->data['PRJCODE_HO'];
         else
             $PRJCODE_LEV	= $this->data['PRJCODE'];
@@ -300,12 +315,12 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
         $APPROVER_5	= '';	
         $disableAll	= 1;
         $DOCAPP_TYPE= 1;
-        $sqlCAPP	= "tbl_docstepapp WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE_LEV' AND POSLEVEL = '$POSS_LEVEL'";
+        $sqlCAPP	= "tbl_docstepapp WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE_LEV' AND MDEPT_CODE = '$MDEPT_CODE1'";
         $resCAPP	= $this->db->count_all($sqlCAPP);
         if($resCAPP > 0)
         {
             $sqlAPP	= "SELECT * FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
-                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND POSLEVEL = '$POSS_LEVEL'";
+                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
             $resAPP	= $this->db->query($sqlAPP)->result();
             foreach($resAPP as $rowAPP) :
                 $MAX_STEP		= $rowAPP->MAX_STEP;
@@ -400,7 +415,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
         
             // CHECK AUTH APPROVE TYPE
             $sqlAPPT	= "SELECT DOCAPP_TYPE FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
-                            AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND POSLEVEL = '$POSS_LEVEL'";
+                            AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
             $resAPPT	= $this->db->query($sqlAPP)->result();
             foreach($resAPPT as $rowAPPT) :
                 $DOCAPP_TYPE	= $rowAPPT->DOCAPP_TYPE;
@@ -408,7 +423,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
         }
         
         $sqlSTEPAPP	= "tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND APPROVER_1 = '$DefEmp_ID'
-                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND POSLEVEL = '$POSS_LEVEL'";
+                        AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
         $resSTEPAPP	= $this->db->count_all($sqlSTEPAPP);
         
         if($resSTEPAPP > 0)
@@ -417,14 +432,14 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
             $APPLIMIT_1	= 0;
             
             $sqlAPP	= "SELECT APPLIMIT_1, APP_STEP, MAX_STEP FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp'
-                        AND APPROVER_1 = '$DefEmp_ID' AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND POSLEVEL = '$POSS_LEVEL'";
+                        AND APPROVER_1 = '$DefEmp_ID' AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE Emp_ID = '$DefEmp_ID' AND proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
             $resAPP	= $this->db->query($sqlAPP)->result();
             foreach($resAPP as $rowAPP) :
                 $APPLIMIT_1	= $rowAPP->APPLIMIT_1;
                 $APP_STEP	= $rowAPP->APP_STEP;
                 $MAX_STEP	= $rowAPP->MAX_STEP;
             endforeach;
-            $sqlC_App	= "tbl_approve_hist WHERE AH_CODE = '$MB_NO'";
+            $sqlC_App	= "tbl_approve_hist WHERE AH_CODE = '$DocNumber'";
             $resC_App 	= $this->db->count_all($sqlC_App);
             
             $BefStepApp	= $APP_STEP - 1;
@@ -444,7 +459,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                 $descApp	= "Awaiting";
                 $statcoloer	= "warning";
             }
-                         
+                        
             if($APP_STEP == $MAX_STEP)
                 $IS_LAST		= 1;
             else
@@ -455,18 +470,18 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
             // NOTES
             // $APPLIMIT_1 		= Maximum Limit to Approve
             // $APPROVE_AMOUNT	= Amount must be Approved
-            $APPROVE_AMOUNT 	= 10000000000;
+            $APPROVE_AMOUNT 	= $WO_VALUE;
             //$APPROVE_AMOUNT	= 10000000000;
             //$DOCAPP_TYPE	= 1;
-            // if($DOCAPP_TYPE == 1)
-            // {
-            //     if($APPLIMIT_1 < $APPROVE_AMOUNT)
-            //     {
-            //         $canApprove	= 0;
-            //         $descApp	= "You can not approve caused of the max limit.";
-            //         $statcoloer	= "danger";
-            //     }
-            // }
+            if($DOCAPP_TYPE == 1)
+            {
+                if($APPLIMIT_1 < $APPROVE_AMOUNT)
+                {
+                    $canApprove	= 0;
+                    $descApp	= "You can not approve caused of the max limit.";
+                    $statcoloer	= "danger";
+                }
+            }
         }
         else
         {
@@ -573,20 +588,20 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                     <input type="submit" class="button_css" name="submitSrch" id="submitSrch" value=" search " style="display:none" />
                 </form>
                 <form name="frm1" method="post" action="<?php echo $form_action; ?>" enctype="multipart/form-data" onSubmit="return checkData();">
-                    <input type="text" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $Emp_ID; ?>" />
-		            <input type="text" name="IS_LAST" id="IS_LAST" value="<?php echo $IS_LAST; ?>">
-		            <input type="text" name="APP_LEVEL" id="APP_LEVEL" value="<?php echo $APP_LEVEL; ?>">
-		            <input type="text" name="PRJCODE" id="PRJCODE" value="<?php echo $PRJCODE; ?>">
-                    <input type="text" name="MB_DEPT" id="MB_DEPT" class="textbox" value="<?php echo $MB_DEPT; ?>" />
-                    <input type="text" name="MB_STATUS" id="MB_STATUS" class="textbox" value="<?php echo $MB_STATUS; ?>" />
+                    <input type="hidden" name="Emp_ID" id="Emp_ID" class="textbox" value="<?php echo $Emp_ID; ?>" />
+		            <input type="hidden" name="IS_LAST" id="IS_LAST" value="<?php echo $IS_LAST; ?>">
+		            <input type="hidden" name="APP_LEVEL" id="APP_LEVEL" value="<?php echo $APP_LEVEL; ?>">
+		            <input type="hidden" name="PRJCODE" id="PRJCODE" value="<?php echo $PRJCODE; ?>">
+                    <input type="hidden" name="MB_DEPT" id="MB_DEPT" class="textbox" value="<?php echo $MB_DEPT; ?>" />
+                    <input type="hidden" name="MB_STATUS" id="MB_STATUS" class="textbox" value="<?php echo $MB_STATUS; ?>" />
                     <input type="hidden" name="MB_PATTNO" id="MB_PATTNO" class="textbox" value="<?php echo $resMBCN; ?>" />
-                    <input type="text" name="MB_NO" id="MB_NO" class="textbox" value="<?php echo $MB_NO; ?>" />
-                    <input type="text" name="MB_CODE" id="MB_CODE" class="textbox" value="<?php echo $MAIL_NO; ?>" />
+                    <input type="hidden" name="MB_NO" id="MB_NO" class="textbox" value="<?php echo $MB_NO; ?>" />
+                    <input type="hidden" name="MB_CODE" id="MB_CODE" class="textbox" value="<?php echo $MAIL_NO; ?>" />
                     <div class="box-body">
                         <div class="form-group">
                             <select name="MB_CLASS" id="MB_CLASS" class="form-control select2" onChange="ShowDocSelect(1);">
-                                <option value="M" <?php if($MB_CLASS == 'M') { ?> selected <?php } ?>> Memo </option>
-                                <option value="S" <?php if($MB_CLASS == 'S') { ?> selected <?php } ?>> Surat </option>
+                                <option value="MO" <?php if($MB_CLASS == 'MO') { ?> selected <?php } ?>> Memo </option>
+                                <option value="LT" <?php if($MB_CLASS == 'LT') { ?> selected <?php } ?>> Surat </option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -614,50 +629,24 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                                 <?php
 									if($MDEPT_CODE1 != 'JXXX')
 									{
-										$sqlDept	= "SELECT A.DEMP_DEPCODE,
-															B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
-														FROM tbl_mail_dept_emp A
-															INNER JOIN tbl_mail_dept B ON A.DEMP_DEPCODE = B.MDEPT_CODE
-														WHERE A.DEMP_EMPID = '$DefEmp_ID'
-										 				ORDER BY A.DEMP_DEPCODE";
-										$sqlDept	= $this->db->query($sqlDept)->result();
-										foreach($sqlDept as $rowDept) :
-											$DEMP_DEPCODE	= $rowDept->DEMP_DEPCODE;
-											$MDEPT_CODE		= $rowDept->MDEPT_CODE;
-											$MDEPT_DESC		= $rowDept->MDEPT_DESC;
-											$MDEPT_POSIT	= $rowDept->MDEPT_POSIT;
-											$MDEPT_NAME		= $rowDept->MDEPT_NAME;
-											$MDEPT_POSLEV	= $rowDept->MDEPT_POSLEV;
-											?>
-												<option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MB_DEPT) { ?> selected <?php } ?>>
-													<?php echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
-												</option>
-											<?php
-                                            if($MDEPT_POSLEV == 'DEPT')
-                                            {
-                                                $sqlDIR	= "SELECT A.DEMP_DEPCODE,
-                                                                    B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
-                                                                FROM tbl_mail_dept_emp A
-                                                                    INNER JOIN tbl_mail_dept B ON A.DEMP_DEPCODE = B.MDEPT_CODE
-                                                                WHERE B.MDEPT_POSLEV = 'BOD'
-                                                                ORDER BY A.DEMP_DEPCODE";
-                                                $sqlDIR	= $this->db->query($sqlDIR)->result();
-                                                foreach($sqlDIR as $rowDIR) :
-                                                    $DEMP_DEPCODE	= $rowDIR->DEMP_DEPCODE;
-                                                    $MDEPT_CODE		= $rowDIR->MDEPT_CODE;
-                                                    $MDEPT_DESC		= $rowDIR->MDEPT_DESC;
-                                                    $MDEPT_POSIT	= $rowDIR->MDEPT_POSIT;
-                                                    $MDEPT_NAME		= $rowDIR->MDEPT_NAME;
-                                                    $MDEPT_POSLEV	= $rowDIR->MDEPT_POSLEV;
-                                                    ?>
-                                                        <option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MB_DEPT) { ?> selected <?php } ?>>
-                                                            <?php //echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
-                                                            <?php echo "$MDEPT_CODE - $MDEPT_DESC / $MDEPT_NAME"; ?>
-                                                        </option>
-                                                    <?php
-                                                endforeach;
-                                            }
-										endforeach;
+										$sqlDept	= "SELECT B.MDEPT_CODE, B.MDEPT_DESC, B.MDEPT_POSIT, B.MDEPT_NAME, B.MDEPT_POSLEV
+                                                        FROM tbl_mail_dept B
+                                                        WHERE B.MDEPT_EMPID IN (SELECT Emp_ID FROM tbl_employee WHERE Pos_Code = '$POSS_PARENT')
+                                                        OR B.MDEPT_EMPID = '$DefEmp_ID'
+                                                         ORDER BY B.MDEPT_CODE";
+                                        $sqlDept	= $this->db->query($sqlDept)->result();
+                                        foreach($sqlDept as $rowDept) :
+                                            $MDEPT_CODE		= $rowDept->MDEPT_CODE;
+                                            $MDEPT_DESC		= $rowDept->MDEPT_DESC;
+                                            $MDEPT_POSIT	= $rowDept->MDEPT_POSIT;
+                                            $MDEPT_NAME		= $rowDept->MDEPT_NAME;
+                                            $MDEPT_POSLEV	= $rowDept->MDEPT_POSLEV;
+                                            ?>
+                                                <option value="<?php echo "$MDEPT_CODE"; ?>" <?php if($MDEPT_CODE == $MDEPT_CODE1) { ?> selected <?php } ?>>
+                                                    <?php echo "$MDEPT_CODE - $MDEPT_POSIT / $MDEPT_NAME"; ?>
+                                                </option>
+                                            <?php
+                                        endforeach;
 									}
 									else
 									{
@@ -699,7 +688,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                                 ?>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display: none;">
                             <select name="MB_TOG[]" id="MB_TOG" class="form-control select2" multiple="multiple" data-placeholder="&nbsp;&nbsp;&nbsp;Mail To Group" style="width: 100%;">
                                 <?php
                                     $MB_TOGx    = ""; 
@@ -926,7 +915,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
                             $sqlCAPPH	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM'";
                             $resCAPPH	= $this->db->count_all($sqlCAPPH);
 							$sqlAPP		= "SELECT * FROM tbl_docstepapp WHERE MENU_CODE = '$MenuApp'
-											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE'";
+											AND PRJCODE IN (SELECT proj_Code FROM tbl_employee_proj WHERE proj_Code = '$PRJCODE_LEV') AND MDEPT_CODE = '$MDEPT_CODE1'";
 							$resAPP		= $this->db->query($sqlAPP)->result();
 							foreach($resAPP as $rowAPP) :
 								$MAX_STEP		= $rowAPP->MAX_STEP;
@@ -975,7 +964,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 								              	<table id="tbl" class="table table-striped" width="100%" border="0">
 													<?php
 														$s_STEP		= "SELECT DISTINCT APP_STEP, MDEPT_CODE FROM tbl_docstepapp_det
-																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE' ORDER BY APP_STEP";
+																		WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE1' ORDER BY APP_STEP";
 														$r_STEP		= $this->db->query($s_STEP)->result();
 														foreach($r_STEP as $rw_STEP) :
 															$STEP	    = $rw_STEP->APP_STEP;
@@ -1019,7 +1008,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 																			$s_00	= "SELECT DISTINCT A.APPROVER_1, A.MDEPT_CODE,
 																							CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS complName
 																						FROM tbl_docstepapp_det A INNER JOIN tbl_employee B ON A.APPROVER_1 = B.Emp_ID
-																						WHERE A.MENU_CODE = '$MenuApp' AND A.PRJCODE = '$PRJCODE' AND A.MDEPT_CODE = '$MDEPT_CODE' AND A.APP_STEP = $STEP";
+																						WHERE A.MENU_CODE = '$MenuApp' AND A.PRJCODE = '$PRJCODE' AND A.MDEPT_CODE = '$MDEPT_CODE1' AND A.APP_STEP = $STEP";
 																			$r_00	= $this->db->query($s_00)->result();
 																			foreach($r_00 as $rw_00) :
 																				$APP_EMP_1	= $rw_00->APPROVER_1;
@@ -1057,7 +1046,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 											                                    	$APPCOL 	= "danger";
 											                                    	$APPIC 		= "close";
 											                                    	$APPDT 		= "-";
-											                                    	$s_APPH_O	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE')";
+											                                    	$s_APPH_O	= "tbl_approve_hist WHERE AH_CODE = '$DOC_NUM' AND AH_APPLEV = '$STEP' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE1')";
 												                                    $r_APPH_O	= $this->db->count_all($s_APPH_O);
 												                                    if($r_APPH_O > 0)
 												                                    	$OTHAPP = 1;
@@ -1084,7 +1073,7 @@ $MAIL_NO	= "$Period-$comp/$MB_CLASS-$no_urut/$MB_TYPE/$MB_DEPT";
 											                                    	$s_01	= "SELECT A.AH_APPROVED, A.AH_APPLEV,
 											                                    					CONCAT(TRIM(B.First_Name),IF(B.Last_Name = '','',' '),TRIM(B.Last_Name)) AS COMPLNAME
 											                                    				FROM tbl_approve_hist A INNER JOIN tbl_employee B ON A.AH_APPROVER = B.Emp_ID
-											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE')";
+											                                    					WHERE AH_CODE = '$DOC_NUM' AND AH_APPROVER NOT IN (SELECT DISTINCT APPROVER_1 FROM tbl_docstepapp_det WHERE MENU_CODE = '$MenuApp' AND PRJCODE = '$PRJCODE' AND MDEPT_CODE = '$MDEPT_CODE1')";
 											                                        $r_01	= $this->db->query($s_01)->result();
 											                                        foreach($r_01 as $rw_01):
 											                                            $APPDT_LEV	= $rw_01->AH_APPLEV;
