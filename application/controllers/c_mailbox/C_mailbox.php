@@ -344,6 +344,9 @@ class C_mailbox  extends CI_Controller
 			
 			$tot_Sent 				= $this->m_mailbox->count_all_sent($DefEmp_ID);
 			$data["countSent"] 		= $tot_Sent;
+
+			$tot_Proc 				= $this->m_mailbox->count_all_proc($DefEmp_ID);
+			$data["countProc"] 		= $tot_Proc;
 			
 			$tot_Draft 				= $this->m_mailbox->count_all_draft($DefEmp_ID);
 			$data["countDraft"] 	= $tot_Draft;
